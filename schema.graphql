@@ -2,14 +2,24 @@
 ### Do not make changes to this file directly
 
 
+type AuthError implements CommonError {
+  message: String!
+}
+
 type AuthPayload {
   token: String!
   user: User!
 }
 
+union AuthResponse = AuthError | AuthPayload
+
+interface CommonError {
+  message: String!
+}
+
 type Mutation {
-  login(email: String!, password: String!): AuthPayload!
-  signup(email: String!, name: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthResponse!
+  register(email: String!, name: String!, password: String!): AuthResponse!
 }
 
 type Query {

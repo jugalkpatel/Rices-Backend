@@ -28,6 +28,9 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  AuthError: { // root type
+    message: string; // String!
+  }
   AuthPayload: { // root type
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
@@ -42,23 +45,28 @@ export interface NexusGenObjects {
 }
 
 export interface NexusGenInterfaces {
+  CommonError: NexusGenRootTypes['AuthError'];
 }
 
 export interface NexusGenUnions {
+  AuthResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['AuthPayload'];
 }
 
-export type NexusGenRootTypes = NexusGenObjects
+export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenUnions
 
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AuthError: { // field return type
+    message: string; // String!
+  }
   AuthPayload: { // field return type
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
-    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
   }
   Query: { // field return type
     user: NexusGenRootTypes['User']; // User!
@@ -68,16 +76,22 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     name: string; // String!
   }
+  CommonError: { // field return type
+    message: string; // String!
+  }
 }
 
 export interface NexusGenFieldTypeNames {
+  AuthError: { // field return type name
+    message: 'String'
+  }
   AuthPayload: { // field return type name
     token: 'String'
     user: 'User'
   }
   Mutation: { // field return type name
-    login: 'AuthPayload'
-    signup: 'AuthPayload'
+    login: 'AuthResponse'
+    register: 'AuthResponse'
   }
   Query: { // field return type name
     user: 'User'
@@ -87,6 +101,9 @@ export interface NexusGenFieldTypeNames {
     id: 'String'
     name: 'String'
   }
+  CommonError: { // field return type name
+    message: 'String'
+  }
 }
 
 export interface NexusGenArgTypes {
@@ -95,7 +112,7 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password: string; // String!
     }
-    signup: { // args
+    register: { // args
       email: string; // String!
       name: string; // String!
       password: string; // String!
@@ -109,9 +126,12 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
+  AuthResponse: "AuthError" | "AuthPayload"
+  CommonError: "AuthError"
 }
 
 export interface NexusGenTypeInterfaces {
+  AuthError: "CommonError"
 }
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
@@ -120,21 +140,21 @@ export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = never;
+export type NexusGenInterfaceNames = keyof NexusGenInterfaces;
 
 export type NexusGenScalarNames = keyof NexusGenScalars;
 
-export type NexusGenUnionNames = never;
+export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = never;
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AuthError" | "AuthPayload";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
-    isTypeOf: false
-    resolveType: true
+    isTypeOf: true
     __typename: false
+    resolveType: false
   }
 }
 
