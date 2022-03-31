@@ -70,7 +70,7 @@ export const AuthMutation = extendType({
 
         if (!user?.id) {
           return {
-            message: "User not found!",
+            message: "user not available",
           };
         }
 

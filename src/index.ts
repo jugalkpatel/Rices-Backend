@@ -5,6 +5,10 @@ import { context } from "./context";
 export const server = new ApolloServer({
   schema,
   context,
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
 });
 
 const port = 4000;
