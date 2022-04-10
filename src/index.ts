@@ -1,18 +1,34 @@
-import { ApolloServer } from "apollo-server";
-import { schema } from "./schema";
+import { ApolloServer } from "apollo-server-express";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
+import express from "express";
+import http from "http";
+
+import { schemaWithPermissions } from "./schema";
 import { context } from "./context";
 
-export const server = new ApolloServer({
-  schema,
-  context,
-  cors: {
-    origin: "*",
-    credentials: true,
-  },
-});
+(async () => {
+  try {
+    const app = express();
+    const httpServer = http.createServer(app);
 
-const port = 4000;
+    const server = new ApolloServer({
+      context,
+      schema: schemaWithPermissions,
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    });
 
-server.listen({ port }).then(({ url }) => {
-  console.log(`Server Ready at ${url}`);
-});
+    await server.start();
+
+    server.applyMiddleware({ app, path: "/" });
+
+    await new Promise<void>((resolve) =>
+      httpServer.listen({ port: 4000 }, resolve)
+    );
+
+    console.log(
+      `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
+    );
+  } catch (error) {
+    console.error({ error });
+  }
+})();

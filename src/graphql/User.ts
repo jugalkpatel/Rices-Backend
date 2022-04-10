@@ -29,7 +29,7 @@ export const UserQuery = extendType({
           where: { email },
         });
 
-        if (!user) {
+        if (!user || userId !== user?.id) {
           throw new Error("user not found!");
         }
 

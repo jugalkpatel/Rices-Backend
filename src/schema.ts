@@ -1,8 +1,21 @@
 import { makeSchema } from "nexus";
+import { shield } from "graphql-shield";
+import { applyMiddleware } from "graphql-middleware";
 import { join } from "path";
-import * as types from "./graphql";
+import "dotenv/config";
 
-export const schema = makeSchema({
+import * as types from "./graphql";
+import { isAuthenticated } from "./middlewares";
+
+const permissions = shield(
+  {
+    Query: { user: isAuthenticated },
+    Mutation: {},
+  },
+  { debug: true, allowExternalErrors: true }
+);
+
+export const baseSchema = makeSchema({
   types,
   outputs: {
     schema: join(process.cwd(), "schema.graphql"),
@@ -18,3 +31,5 @@ export const schema = makeSchema({
     },
   },
 });
+
+export const schemaWithPermissions = applyMiddleware(baseSchema, permissions);
