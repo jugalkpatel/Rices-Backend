@@ -6,6 +6,10 @@ import http from "http";
 import { schemaWithPermissions } from "./schema";
 import { context } from "./context";
 
+const APP_SECRET = process.env.DATABSE_URL as string;
+
+console.log(APP_SECRET);
+
 (async () => {
   try {
     const app = express();

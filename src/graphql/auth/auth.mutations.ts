@@ -1,56 +1,9 @@
-import {
-  extendType,
-  objectType,
-  nonNull,
-  stringArg,
-  unionType,
-  interfaceType,
-} from "nexus";
+import { extendType, nonNull, stringArg } from "nexus";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import "dotenv/config";
 
 const APP_SECRET = process.env.TOKEN_SECRET as string;
-
-export const CommonError = interfaceType({
-  name: "CommonError",
-  definition(t) {
-    t.nonNull.string("message");
-  },
-});
-
-export const AuthError = objectType({
-  name: "AuthError",
-  isTypeOf: (data) => {
-    const isTypeValid = "message" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    t.implements("CommonError");
-  },
-});
-
-export const AuthPayload = objectType({
-  name: "AuthPayload",
-  isTypeOf: (data) => {
-    const isTypeValid = "token" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    t.nonNull.string("token");
-    t.nonNull.field("user", { type: "User" });
-  },
-});
-
-export const AuthResponse = unionType({
-  name: "AuthResponse",
-  definition: (t) => {
-    t.members("AuthPayload", "AuthError");
-  },
-});
-
 export const AuthMutation = extendType({
   type: "Mutation",
   definition: (t) => {
@@ -63,9 +16,6 @@ export const AuthMutation = extendType({
       },
       resolve: async (_root, args, context) => {
         const { email, password } = args;
-
-        console.log({ email, password });
-
         const user = await context.prisma.user.findUnique({ where: { email } });
 
         if (!user?.id) {
@@ -82,7 +32,9 @@ export const AuthMutation = extendType({
           };
         }
 
-        const token = jwt.sign({ userId: user.id }, APP_SECRET);
+        const token = jwt.sign({ userId: user.id }, APP_SECRET, {
+          expiresIn: "1h",
+        });
 
         return {
           token,
@@ -125,7 +77,9 @@ export const AuthMutation = extendType({
           };
         }
 
-        const token = jwt.sign({ userId: user.id }, APP_SECRET);
+        const token = jwt.sign({ userId: user.id }, APP_SECRET, {
+          expiresIn: "1h",
+        });
 
         return {
           token,

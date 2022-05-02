@@ -10,7 +10,7 @@ import { isAuthenticated } from "./middlewares";
 const permissions = shield(
   {
     Query: { user: isAuthenticated },
-    Mutation: {},
+    Mutation: { CreateCommunity: isAuthenticated },
   },
   { debug: true, allowExternalErrors: true }
 );

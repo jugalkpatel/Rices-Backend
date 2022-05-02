@@ -5,8 +5,23 @@
 
 
 import type { Context } from "./src/context"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+  }
+}
 
 
 declare global {
@@ -25,15 +40,34 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  DateTime: any
 }
 
 export interface NexusGenObjects {
+  AllCommunities: { // root type
+    communities: NexusGenRootTypes['CommunityResult'][]; // [CommunityResult!]!
+  }
   AuthError: { // root type
     message: string; // String!
   }
   AuthPayload: { // root type
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
+  }
+  Community: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['User']; // User!
+    description: string; // String!
+    id: string; // String!
+    members?: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    title: string; // String!
+  }
+  CommunityError: { // root type
+    message: string; // String!
+  }
+  CommunityResult: { // root type
+    id: string; // String!
+    title: string; // String!
   }
   Mutation: {};
   Query: {};
@@ -45,11 +79,13 @@ export interface NexusGenObjects {
 }
 
 export interface NexusGenInterfaces {
-  CommonError: NexusGenRootTypes['AuthError'];
+  CommonError: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['CommunityError'];
 }
 
 export interface NexusGenUnions {
+  AllCommunitiesResponse: NexusGenRootTypes['AllCommunities'] | NexusGenRootTypes['CommunityError'];
   AuthResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['AuthPayload'];
+  CommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['CommunityResult'];
 }
 
 export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenUnions
@@ -57,6 +93,9 @@ export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenU
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AllCommunities: { // field return type
+    communities: NexusGenRootTypes['CommunityResult'][]; // [CommunityResult!]!
+  }
   AuthError: { // field return type
     message: string; // String!
   }
@@ -64,11 +103,28 @@ export interface NexusGenFieldTypes {
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
+  Community: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['User']; // User!
+    description: string; // String!
+    id: string; // String!
+    members: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    title: string; // String!
+  }
+  CommunityError: { // field return type
+    message: string; // String!
+  }
+  CommunityResult: { // field return type
+    id: string; // String!
+    title: string; // String!
+  }
   Mutation: { // field return type
+    CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
   }
   Query: { // field return type
+    allCommunities: NexusGenRootTypes['AllCommunitiesResponse']; // AllCommunitiesResponse!
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
@@ -82,6 +138,9 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  AllCommunities: { // field return type name
+    communities: 'CommunityResult'
+  }
   AuthError: { // field return type name
     message: 'String'
   }
@@ -89,11 +148,28 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
     user: 'User'
   }
+  Community: { // field return type name
+    createdAt: 'DateTime'
+    creator: 'User'
+    description: 'String'
+    id: 'String'
+    members: 'User'
+    title: 'String'
+  }
+  CommunityError: { // field return type name
+    message: 'String'
+  }
+  CommunityResult: { // field return type name
+    id: 'String'
+    title: 'String'
+  }
   Mutation: { // field return type name
+    CreateCommunity: 'CommunityResponse'
     login: 'AuthResponse'
     register: 'AuthResponse'
   }
   Query: { // field return type name
+    allCommunities: 'AllCommunitiesResponse'
     user: 'User'
   }
   User: { // field return type name
@@ -108,6 +184,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    CreateCommunity: { // args
+      description: string; // String!
+      name: string; // String!
+    }
     login: { // args
       email: string; // String!
       password: string; // String!
@@ -126,12 +206,15 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
+  AllCommunitiesResponse: "AllCommunities" | "CommunityError"
   AuthResponse: "AuthError" | "AuthPayload"
-  CommonError: "AuthError"
+  CommunityResponse: "CommunityError" | "CommunityResult"
+  CommonError: "AuthError" | "CommunityError"
 }
 
 export interface NexusGenTypeInterfaces {
   AuthError: "CommonError"
+  CommunityError: "CommonError"
 }
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
@@ -146,7 +229,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AuthError" | "AuthPayload";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

@@ -2,12 +2,14 @@ import { rule } from "graphql-shield";
 import * as jwt from "jsonwebtoken";
 import { ApolloError } from "apollo-server";
 
-import { Context, AuthTokenPayload } from "../types";
+import { Context, AuthTokenPayload } from "types";
 
 const APP_SECRET = process.env.TOKEN_SECRET as string;
 
 const isAuthenticated = rule()(async (parent, args, ctx: Context, info) => {
   const authHeader = ctx.request.headers["authorization"];
+
+  console.log({ authHeader });
 
   let decodedToken;
 
@@ -27,8 +29,8 @@ const isAuthenticated = rule()(async (parent, args, ctx: Context, info) => {
     where: { id: decodedToken.userId },
   });
 
-  if (!user?.id) {
-    return new Error("user not available");
+  if (!user || !user.id) {
+    return new Error("user not found!");
   }
 
   ctx.userId = user.id;
@@ -36,4 +38,4 @@ const isAuthenticated = rule()(async (parent, args, ctx: Context, info) => {
   return true;
 });
 
-export { isAuthenticated };
+export default isAuthenticated;
