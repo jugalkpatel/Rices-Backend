@@ -51,7 +51,6 @@ export interface NexusGenObjects {
     message: string; // String!
   }
   AuthPayload: { // root type
-    token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
   Community: { // root type
@@ -68,6 +67,9 @@ export interface NexusGenObjects {
   CommunityResult: { // root type
     id: string; // String!
     title: string; // String!
+  }
+  IRefresh: { // root type
+    success: boolean; // Boolean!
   }
   Mutation: {};
   Query: {};
@@ -86,6 +88,8 @@ export interface NexusGenUnions {
   AllCommunitiesResponse: NexusGenRootTypes['AllCommunities'] | NexusGenRootTypes['CommunityError'];
   AuthResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['AuthPayload'];
   CommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['CommunityResult'];
+  GetCommunityResponse: NexusGenRootTypes['Community'] | NexusGenRootTypes['CommunityError'];
+  RefreshResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['IRefresh'];
 }
 
 export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenUnions
@@ -100,7 +104,6 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   AuthPayload: { // field return type
-    token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
   Community: { // field return type
@@ -118,13 +121,20 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     title: string; // String!
   }
+  IRefresh: { // field return type
+    success: boolean; // Boolean!
+  }
   Mutation: { // field return type
     CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
+    authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
   }
   Query: { // field return type
+    GetCommunityResponse: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
     allCommunities: NexusGenRootTypes['AllCommunitiesResponse']; // AllCommunitiesResponse!
+    authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
@@ -145,7 +155,6 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   AuthPayload: { // field return type name
-    token: 'String'
     user: 'User'
   }
   Community: { // field return type name
@@ -163,13 +172,20 @@ export interface NexusGenFieldTypeNames {
     id: 'String'
     title: 'String'
   }
+  IRefresh: { // field return type name
+    success: 'Boolean'
+  }
   Mutation: { // field return type name
     CreateCommunity: 'CommunityResponse'
+    authenticate: 'AuthResponse'
     login: 'AuthResponse'
+    refresh: 'RefreshResponse'
     register: 'AuthResponse'
   }
   Query: { // field return type name
+    GetCommunityResponse: 'GetCommunityResponse'
     allCommunities: 'AllCommunitiesResponse'
+    authenticate: 'AuthResponse'
     user: 'User'
   }
   User: { // field return type name
@@ -199,6 +215,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    GetCommunityResponse: { // args
+      name: string; // String!
+    }
     user: { // args
       email: string; // String!
     }
@@ -209,6 +228,8 @@ export interface NexusGenAbstractTypeMembers {
   AllCommunitiesResponse: "AllCommunities" | "CommunityError"
   AuthResponse: "AuthError" | "AuthPayload"
   CommunityResponse: "CommunityError" | "CommunityResult"
+  GetCommunityResponse: "Community" | "CommunityError"
+  RefreshResponse: "AuthError" | "IRefresh"
   CommonError: "AuthError" | "CommunityError"
 }
 
@@ -229,7 +250,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult" | "IRefresh";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

@@ -50,6 +50,13 @@ export const CommunityResponse = unionType({
   },
 });
 
+export const GetCommunityResponse = unionType({
+  name: "GetCommunityResponse",
+  definition: (t) => {
+    t.members("Community", "CommunityError");
+  },
+});
+
 export const AllCommunities = objectType({
   name: "AllCommunities",
   isTypeOf: (data) => {

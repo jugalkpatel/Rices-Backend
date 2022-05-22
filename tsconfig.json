@@ -11,6 +11,7 @@
     "baseUrl": "./src",
     "paths": {
       "@middlewares": ["middlewares/*"]
+      // "types": ["types.d.ts"]
     }
   }
 }

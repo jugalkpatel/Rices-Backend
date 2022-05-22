@@ -6,8 +6,18 @@ export type Context = {
   request: Request;
   response: Response;
   userId?: string;
+  tokenVersion?: number;
 };
 
-export type AuthTokenPayload = {
-  userId: string;
+export type AccessTokenPayload = {
+  user: string;
+};
+
+export type RefreshTokenPayload = AccessTokenPayload & {
+  tokenVersion: number;
+};
+
+export type ICookie = {
+  access: string;
+  refresh: string;
 };

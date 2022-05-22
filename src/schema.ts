@@ -5,12 +5,16 @@ import { join } from "path";
 import "dotenv/config";
 
 import * as types from "./graphql";
-import { isAuthenticated } from "./middlewares";
+import { isAuthenticated, isRefreshTokenValid } from "./middlewares";
 
 const permissions = shield(
   {
     Query: { user: isAuthenticated },
-    Mutation: { CreateCommunity: isAuthenticated },
+    Mutation: {
+      CreateCommunity: isAuthenticated,
+      authenticate: isAuthenticated,
+      refresh: isRefreshTokenValid,
+    },
   },
   { debug: true, allowExternalErrors: true }
 );

@@ -1,41 +1,79 @@
 import { rule } from "graphql-shield";
-import * as jwt from "jsonwebtoken";
-import { ApolloError } from "apollo-server";
+import { AuthenticationError } from "apollo-server-errors";
 
-import { Context, AuthTokenPayload } from "types";
+import { Context } from "types";
+import {
+  verifyAccessToken,
+  verifyRefreshToken,
+  TokenError,
+  CookieNames,
+  clearTokens,
+} from "../utils";
 
-const APP_SECRET = process.env.TOKEN_SECRET as string;
+export const isAuthenticated = rule()(
+  async (_parent, _args, ctx: Context, _info) => {
+    let decodedToken;
 
-const isAuthenticated = rule()(async (parent, args, ctx: Context, info) => {
-  const authHeader = ctx.request.headers["authorization"];
+    const { request, prisma } = ctx;
 
-  console.log({ authHeader });
+    // const accessToken = request.cookies["access"];
+    const accessToken = request.cookies[CookieNames.ACCESS];
 
-  let decodedToken;
+    if (!accessToken) {
+      return new AuthenticationError("token not found!");
+    }
 
-  if (!authHeader) {
-    return new ApolloError("token not found!");
+    try {
+      decodedToken = verifyAccessToken(accessToken);
+    } catch (error) {
+      throw new TokenError("token expired");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decodedToken.user },
+    });
+
+    if (!user || !user.id) {
+      return new Error("user not found!");
+    }
+
+    ctx.userId = user.id;
+
+    return true;
   }
+);
 
-  const token = authHeader.replace("Bearer ", "");
+export const isRefreshTokenValid = rule()(
+  async (_parent, _args, ctx: Context, _info) => {
+    let decodedToken;
 
-  try {
-    decodedToken = jwt.verify(token, APP_SECRET) as unknown as AuthTokenPayload;
-  } catch {
-    throw new ApolloError("token expired", "TOKEN_EXPIRED");
+    const { prisma, request, response } = ctx;
+
+    // const refreshToken = request.cookies["refresh"];
+    const refreshToken = request.cookies[CookieNames.REFRESH];
+
+    if (!refreshToken) {
+      return new AuthenticationError("refresh token not found!");
+    }
+
+    try {
+      decodedToken = verifyRefreshToken(refreshToken);
+    } catch (error) {
+      clearTokens(response);
+      throw new TokenError("refresh token expired");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decodedToken.user },
+    });
+
+    if (!user || !user.id) {
+      return new Error("user not found!");
+    }
+
+    ctx.userId = user.id;
+    ctx.tokenVersion = user.tokenVersion;
+
+    return true;
   }
-
-  const user = await ctx.prisma.user.findUnique({
-    where: { id: decodedToken.userId },
-  });
-
-  if (!user || !user.id) {
-    return new Error("user not found!");
-  }
-
-  ctx.userId = user.id;
-
-  return true;
-});
-
-export default isAuthenticated;
+);

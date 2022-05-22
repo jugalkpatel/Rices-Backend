@@ -1,4 +1,4 @@
-import { objectType, unionType } from "nexus";
+import { booleanArg, objectType, unionType } from "nexus";
 
 export const AuthError = objectType({
   name: "AuthError",
@@ -15,12 +15,12 @@ export const AuthError = objectType({
 export const AuthPayload = objectType({
   name: "AuthPayload",
   isTypeOf: (data) => {
-    const isTypeValid = "token" in data ? true : false;
+    const isTypeValid = "user" in data ? true : false;
 
     return isTypeValid;
   },
   definition: (t) => {
-    t.nonNull.string("token");
+    // t.nonNull.string("token");
     t.nonNull.field("user", { type: "User" });
   },
 });
@@ -29,5 +29,24 @@ export const AuthResponse = unionType({
   name: "AuthResponse",
   definition: (t) => {
     t.members("AuthPayload", "AuthError");
+  },
+});
+
+export const IRefresh = objectType({
+  name: "IRefresh",
+  isTypeOf: (data) => {
+    const isTypeValid = "success" in data ? true : false;
+
+    return isTypeValid;
+  },
+  definition: (t) => {
+    t.nonNull.field("success", { type: "Boolean" });
+  },
+});
+
+export const RefreshResponse = unionType({
+  name: "RefreshResponse",
+  definition(t) {
+    t.members("IRefresh", "AuthError");
   },
 });

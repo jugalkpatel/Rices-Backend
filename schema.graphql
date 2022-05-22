@@ -13,7 +13,6 @@ type AuthError implements CommonError {
 }
 
 type AuthPayload {
-  token: String!
   user: User!
 }
 
@@ -48,16 +47,28 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+union GetCommunityResponse = Community | CommunityError
+
+type IRefresh {
+  success: Boolean!
+}
+
 type Mutation {
   CreateCommunity(description: String!, name: String!): CommunityResponse!
+  authenticate: AuthResponse!
   login(email: String!, password: String!): AuthResponse!
+  refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): AuthResponse!
 }
 
 type Query {
+  GetCommunityResponse(name: String!): GetCommunityResponse!
   allCommunities: AllCommunitiesResponse!
+  authenticate: AuthResponse!
   user(email: String!): User!
 }
+
+union RefreshResponse = AuthError | IRefresh
 
 type User {
   email: String!

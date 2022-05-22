@@ -1,2 +1,1 @@
-// export { isAuthenticated } from "./rules";
-export { default as isAuthenticated } from "./rules";
+export { isAuthenticated, isRefreshTokenValid } from "./rules";

@@ -1,4 +1,4 @@
-import { extendType } from "nexus";
+import { extendType, nonNull, stringArg } from "nexus";
 import { Context } from "types";
 
 export const allCommunities = extendType({
@@ -22,6 +22,34 @@ export const allCommunities = extendType({
         } catch (_) {
           return {
             message: "something went wrong!",
+          };
+        }
+      },
+    });
+
+    t.nonNull.field("GetCommunityResponse", {
+      type: "GetCommunityResponse",
+      args: {
+        name: nonNull(stringArg()),
+      },
+      resolve: async (_parent, args, context: Context) => {
+        try {
+          const { prisma } = context;
+          const { name } = args;
+
+          const community = await prisma.community.findUnique({
+            where: { title: name },
+            include: { creator: true, members: true },
+          });
+
+          if (!community) {
+            return { message: "community not found!" };
+          }
+
+          return community;
+        } catch (error) {
+          return {
+            message: "unexpected error occurred while finding community",
           };
         }
       },
