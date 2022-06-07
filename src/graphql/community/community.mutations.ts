@@ -98,7 +98,54 @@ export const CreateCommunity = extendType({
             select: { members: { select: { id: true } } },
           });
 
-          // return memberList;
+          return { id: userId };
+        } catch (error) {
+          return {
+            message: "something went wrong!",
+          };
+        }
+      },
+    });
+
+    t.nonNull.field("leaveCommunity", {
+      type: "JoinCommunityResponse",
+      args: {
+        communityId: nonNull(stringArg()),
+      },
+      resolve: async (_parent, args, context: Context) => {
+        try {
+          const { userId, prisma } = context;
+          const { communityId } = args;
+
+          console.log({ userId, communityId });
+
+          if (!userId || !communityId) {
+            return { message: "error while parsing input values" };
+          }
+
+          const community = await prisma.community.findUnique({
+            where: { id: communityId },
+            include: {
+              members: { select: { id: true } },
+            },
+          });
+
+          const isUserAlreadyInCommunity = community?.members.find(
+            ({ id }) => id === userId
+          );
+
+          if (!isUserAlreadyInCommunity) {
+            return { message: "User is not a part of the community." };
+          }
+
+          await prisma.community.update({
+            where: { id: communityId },
+            data: {
+              members: { disconnect: [{ id: userId }] },
+            },
+            select: { members: { select: { id: true } } },
+          });
+
           return { id: userId };
         } catch (error) {
           return {
@@ -109,6 +156,29 @@ export const CreateCommunity = extendType({
     });
   },
 });
+
+// make a mutation that will return userId of the user that leave community
+// input: community id
+// response: userId
+// input and output is same as joincommunity
+// t.nonNull.field("leaveCommunity", {
+//   type: "JoinCommunityResponse",
+//   args: {
+//     communityId: nonNull(stringArg()),
+//   },
+//   resolve: async (_parent, args, context: Context) => {
+//     try {
+//       const { userId, prisma } = context;
+//       const { communityId } = args;
+
+//       if (!userId || !communityId) {
+//         return { mess}
+//       }
+//     } catch (error) {
+//       console.log("something went wrong!");
+//     }
+//   },
+// });
 
 // make a mutation that will return all communties data.
 

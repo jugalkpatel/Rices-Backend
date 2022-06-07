@@ -120,6 +120,7 @@ type Mutation {
   CreateCommunity(description: String!, name: String!): CommunityResponse!
   JoinCommunity(communityId: String!): JoinCommunityResponse!
   authenticate: AuthResponse!
+  leaveCommunity(communityId: String!): JoinCommunityResponse!
   login(email: String!, password: String!): AuthResponse!
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): AuthResponse!

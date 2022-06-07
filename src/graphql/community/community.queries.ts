@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { extendType, nonNull, stringArg } from "nexus";
 import { Context } from "types";
 

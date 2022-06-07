@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 
 import { schemaWithPermissions } from "./schema";
 import { context } from "./context";
-import { getProfileImg } from "./utils";
 
 (async () => {
   try {

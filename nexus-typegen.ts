@@ -251,6 +251,7 @@ export interface NexusGenFieldTypes {
     CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     JoinCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    leaveCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
@@ -372,6 +373,7 @@ export interface NexusGenFieldTypeNames {
     CreateCommunity: 'CommunityResponse'
     JoinCommunity: 'JoinCommunityResponse'
     authenticate: 'AuthResponse'
+    leaveCommunity: 'JoinCommunityResponse'
     login: 'AuthResponse'
     refresh: 'RefreshResponse'
     register: 'AuthResponse'
@@ -416,6 +418,9 @@ export interface NexusGenArgTypes {
       name: string; // String!
     }
     JoinCommunity: { // args
+      communityId: string; // String!
+    }
+    leaveCommunity: { // args
       communityId: string; // String!
     }
     login: { // args
