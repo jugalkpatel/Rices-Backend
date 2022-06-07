@@ -5,7 +5,7 @@ export const UserQuery = extendType({
   type: "Query",
   definition: (t) => {
     t.nonNull.field("user", {
-      type: "User",
+      type: "IUserQueryResult",
       args: {
         email: nonNull(stringArg()),
       },
@@ -18,6 +18,7 @@ export const UserQuery = extendType({
 
         const user = await context.prisma.user.findUnique({
           where: { email },
+          include: { joinedCommunities: { select: { id: true } } },
         });
 
         if (!user || userId !== user?.id) {

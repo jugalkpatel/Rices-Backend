@@ -2,7 +2,12 @@ import { extendType, nonNull, stringArg } from "nexus";
 import * as bcrypt from "bcryptjs";
 
 import { Context } from "types";
-import { setCookies, checkTokenVersion, clearTokens } from "../../utils";
+import {
+  setCookies,
+  checkTokenVersion,
+  clearTokens,
+  getProfileImg,
+} from "../../utils";
 
 export const AuthMutation = extendType({
   type: "Mutation",
@@ -75,13 +80,14 @@ export const AuthMutation = extendType({
 
         const encryptedPassword = await bcrypt.hash(password, 10);
 
-        console.log({ encryptedPassword });
+        const picture = getProfileImg();
 
         const user = await prisma.user.create({
           data: {
             name,
             email,
             password: { create: { password: encryptedPassword } },
+            picture,
           },
         });
 

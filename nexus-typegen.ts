@@ -32,6 +32,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  VoteType: "DOWNVOTE" | "UPVOTE"
 }
 
 export interface NexusGenScalars {
@@ -53,30 +54,99 @@ export interface NexusGenObjects {
   AuthPayload: { // root type
     user: NexusGenRootTypes['User']; // User!
   }
-  Community: { // root type
+  Comment: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    creator: NexusGenRootTypes['User']; // User!
+    id: string; // String!
+    post?: NexusGenRootTypes['Post'] | null; // Post
+    text: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    user?: NexusGenRootTypes['User'] | null; // User
+  }
+  Community: { // root type
+    banner: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
     description: string; // String!
     id: string; // String!
-    members?: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    picture: string; // String!
+    posts?: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  CommunityCreator: { // root type
+    id: string; // String!
+    name: string; // String!
   }
   CommunityError: { // root type
     message: string; // String!
+  }
+  CommunityPost: { // root type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    postedBy: NexusGenRootTypes['User']; // User!
+    title: string; // String!
   }
   CommunityResult: { // root type
     id: string; // String!
     title: string; // String!
   }
+  GetCommunityMember: { // root type
+    id: string; // String!
+    name: string; // String!
+  }
+  GetCommunityResult: { // root type
+    banner: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
+    description: string; // String!
+    id: string; // String!
+    members: Array<NexusGenRootTypes['GetCommunityMember'] | null>; // [GetCommunityMember]!
+    picture: string; // String!
+    posts?: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  IJoinCommunityMember: { // root type
+    id: string; // String!
+  }
   IRefresh: { // root type
     success: boolean; // Boolean!
   }
+  IUser: { // root type
+    id: string; // String!
+  }
+  IUserQueryResult: { // root type
+    id: string; // String!
+    joinedCommunities: Array<NexusGenRootTypes['IUser'] | null>; // [IUser]!
+    name: string; // String!
+  }
+  JoinCommunityResult: { // root type
+    members: Array<NexusGenRootTypes['IJoinCommunityMember'] | null>; // [IJoinCommunityMember]!
+  }
   Mutation: {};
+  Post: { // root type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    postedBy: NexusGenRootTypes['User']; // User!
+    title: string; // String!
+  }
   Query: {};
   User: { // root type
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    picture: string; // String!
+  }
+  Vote: { // root type
+    count: number; // Int!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    post: NexusGenRootTypes['Post']; // Post!
+    type: NexusGenEnums['VoteType']; // VoteType!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    votedBy: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -88,13 +158,14 @@ export interface NexusGenUnions {
   AllCommunitiesResponse: NexusGenRootTypes['AllCommunities'] | NexusGenRootTypes['CommunityError'];
   AuthResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['AuthPayload'];
   CommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['CommunityResult'];
-  GetCommunityResponse: NexusGenRootTypes['Community'] | NexusGenRootTypes['CommunityError'];
+  GetCommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['GetCommunityResult'];
+  JoinCommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['IJoinCommunityMember'];
   RefreshResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['IRefresh'];
 }
 
 export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenUnions
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AllCommunities: { // field return type
@@ -106,41 +177,111 @@ export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
     user: NexusGenRootTypes['User']; // User!
   }
-  Community: { // field return type
+  Comment: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    creator: NexusGenRootTypes['User']; // User!
+    id: string; // String!
+    post: NexusGenRootTypes['Post'] | null; // Post
+    text: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    user: NexusGenRootTypes['User'] | null; // User
+  }
+  Community: { // field return type
+    banner: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
     description: string; // String!
     id: string; // String!
-    members: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    picture: string; // String!
+    posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
     title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  CommunityCreator: { // field return type
+    id: string; // String!
+    name: string; // String!
   }
   CommunityError: { // field return type
     message: string; // String!
+  }
+  CommunityPost: { // field return type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    postedBy: NexusGenRootTypes['User']; // User!
+    title: string; // String!
   }
   CommunityResult: { // field return type
     id: string; // String!
     title: string; // String!
   }
+  GetCommunityMember: { // field return type
+    id: string; // String!
+    name: string; // String!
+  }
+  GetCommunityResult: { // field return type
+    banner: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
+    description: string; // String!
+    id: string; // String!
+    members: Array<NexusGenRootTypes['GetCommunityMember'] | null>; // [GetCommunityMember]!
+    picture: string; // String!
+    posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  IJoinCommunityMember: { // field return type
+    id: string; // String!
+  }
   IRefresh: { // field return type
     success: boolean; // Boolean!
   }
+  IUser: { // field return type
+    id: string; // String!
+  }
+  IUserQueryResult: { // field return type
+    id: string; // String!
+    joinedCommunities: Array<NexusGenRootTypes['IUser'] | null>; // [IUser]!
+    name: string; // String!
+  }
+  JoinCommunityResult: { // field return type
+    members: Array<NexusGenRootTypes['IJoinCommunityMember'] | null>; // [IJoinCommunityMember]!
+  }
   Mutation: { // field return type
     CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
+    JoinCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
   }
+  Post: { // field return type
+    content: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    postedBy: NexusGenRootTypes['User']; // User!
+    title: string; // String!
+  }
   Query: { // field return type
-    GetCommunityResponse: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
+    GetCommunity: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
     allCommunities: NexusGenRootTypes['AllCommunitiesResponse']; // AllCommunitiesResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
-    user: NexusGenRootTypes['User']; // User!
+    user: NexusGenRootTypes['IUserQueryResult']; // IUserQueryResult!
   }
   User: { // field return type
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    picture: string; // String!
+  }
+  Vote: { // field return type
+    count: number; // Int!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // String!
+    post: NexusGenRootTypes['Post']; // Post!
+    type: NexusGenEnums['VoteType']; // VoteType!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    votedBy: NexusGenRootTypes['User']; // User!
   }
   CommonError: { // field return type
     message: string; // String!
@@ -157,41 +298,111 @@ export interface NexusGenFieldTypeNames {
   AuthPayload: { // field return type name
     user: 'User'
   }
-  Community: { // field return type name
+  Comment: { // field return type name
     createdAt: 'DateTime'
-    creator: 'User'
+    id: 'String'
+    post: 'Post'
+    text: 'String'
+    updatedAt: 'DateTime'
+    user: 'User'
+  }
+  Community: { // field return type name
+    banner: 'String'
+    createdAt: 'DateTime'
+    creator: 'CommunityCreator'
     description: 'String'
     id: 'String'
-    members: 'User'
+    picture: 'String'
+    posts: 'Post'
     title: 'String'
+    updatedAt: 'DateTime'
+  }
+  CommunityCreator: { // field return type name
+    id: 'String'
+    name: 'String'
   }
   CommunityError: { // field return type name
     message: 'String'
+  }
+  CommunityPost: { // field return type name
+    content: 'String'
+    createdAt: 'DateTime'
+    id: 'String'
+    postedBy: 'User'
+    title: 'String'
   }
   CommunityResult: { // field return type name
     id: 'String'
     title: 'String'
   }
+  GetCommunityMember: { // field return type name
+    id: 'String'
+    name: 'String'
+  }
+  GetCommunityResult: { // field return type name
+    banner: 'String'
+    createdAt: 'DateTime'
+    creator: 'CommunityCreator'
+    description: 'String'
+    id: 'String'
+    members: 'GetCommunityMember'
+    picture: 'String'
+    posts: 'Post'
+    title: 'String'
+    updatedAt: 'DateTime'
+  }
+  IJoinCommunityMember: { // field return type name
+    id: 'String'
+  }
   IRefresh: { // field return type name
     success: 'Boolean'
   }
+  IUser: { // field return type name
+    id: 'String'
+  }
+  IUserQueryResult: { // field return type name
+    id: 'String'
+    joinedCommunities: 'IUser'
+    name: 'String'
+  }
+  JoinCommunityResult: { // field return type name
+    members: 'IJoinCommunityMember'
+  }
   Mutation: { // field return type name
     CreateCommunity: 'CommunityResponse'
+    JoinCommunity: 'JoinCommunityResponse'
     authenticate: 'AuthResponse'
     login: 'AuthResponse'
     refresh: 'RefreshResponse'
     register: 'AuthResponse'
   }
+  Post: { // field return type name
+    content: 'String'
+    createdAt: 'DateTime'
+    id: 'String'
+    postedBy: 'User'
+    title: 'String'
+  }
   Query: { // field return type name
-    GetCommunityResponse: 'GetCommunityResponse'
+    GetCommunity: 'GetCommunityResponse'
     allCommunities: 'AllCommunitiesResponse'
     authenticate: 'AuthResponse'
-    user: 'User'
+    user: 'IUserQueryResult'
   }
   User: { // field return type name
     email: 'String'
     id: 'String'
     name: 'String'
+    picture: 'String'
+  }
+  Vote: { // field return type name
+    count: 'Int'
+    createdAt: 'DateTime'
+    id: 'String'
+    post: 'Post'
+    type: 'VoteType'
+    updatedAt: 'DateTime'
+    votedBy: 'User'
   }
   CommonError: { // field return type name
     message: 'String'
@@ -204,6 +415,9 @@ export interface NexusGenArgTypes {
       description: string; // String!
       name: string; // String!
     }
+    JoinCommunity: { // args
+      communityId: string; // String!
+    }
     login: { // args
       email: string; // String!
       password: string; // String!
@@ -215,7 +429,7 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    GetCommunityResponse: { // args
+    GetCommunity: { // args
       name: string; // String!
     }
     user: { // args
@@ -228,7 +442,8 @@ export interface NexusGenAbstractTypeMembers {
   AllCommunitiesResponse: "AllCommunities" | "CommunityError"
   AuthResponse: "AuthError" | "AuthPayload"
   CommunityResponse: "CommunityError" | "CommunityResult"
-  GetCommunityResponse: "Community" | "CommunityError"
+  GetCommunityResponse: "CommunityError" | "GetCommunityResult"
+  JoinCommunityResponse: "CommunityError" | "IJoinCommunityMember"
   RefreshResponse: "AuthError" | "IRefresh"
   CommonError: "AuthError" | "CommunityError"
 }
@@ -242,7 +457,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = never;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = keyof NexusGenInterfaces;
 
@@ -250,7 +465,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult" | "IRefresh";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult" | "GetCommunityResult" | "IJoinCommunityMember" | "IRefresh" | "JoinCommunityResult" | "Post";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

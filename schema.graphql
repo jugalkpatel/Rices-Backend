@@ -18,21 +18,46 @@ type AuthPayload {
 
 union AuthResponse = AuthError | AuthPayload
 
+type Comment {
+  createdAt: DateTime!
+  id: String!
+  post: Post
+  text: String!
+  updatedAt: DateTime!
+  user: User
+}
+
 interface CommonError {
   message: String!
 }
 
 type Community {
+  banner: String!
   createdAt: DateTime!
-  creator: User!
+  creator: CommunityCreator!
   description: String!
   id: String!
-  members: [User]
+  picture: String!
+  posts: [Post]
   title: String!
+  updatedAt: DateTime!
+}
+
+type CommunityCreator {
+  id: String!
+  name: String!
 }
 
 type CommunityError implements CommonError {
   message: String!
+}
+
+type CommunityPost {
+  content: String!
+  createdAt: DateTime!
+  id: String!
+  postedBy: User!
+  title: String!
 }
 
 union CommunityResponse = CommunityError | CommunityResult
@@ -47,25 +72,72 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-union GetCommunityResponse = Community | CommunityError
+type GetCommunityMember {
+  id: String!
+  name: String!
+}
+
+union GetCommunityResponse = CommunityError | GetCommunityResult
+
+type GetCommunityResult {
+  banner: String!
+  createdAt: DateTime!
+  creator: CommunityCreator!
+  description: String!
+  id: String!
+  members: [GetCommunityMember]!
+  picture: String!
+  posts: [Post]
+  title: String!
+  updatedAt: DateTime!
+}
+
+type IJoinCommunityMember {
+  id: String!
+}
 
 type IRefresh {
   success: Boolean!
 }
 
+type IUser {
+  id: String!
+}
+
+type IUserQueryResult {
+  id: String!
+  joinedCommunities: [IUser]!
+  name: String!
+}
+
+union JoinCommunityResponse = CommunityError | IJoinCommunityMember
+
+type JoinCommunityResult {
+  members: [IJoinCommunityMember]!
+}
+
 type Mutation {
   CreateCommunity(description: String!, name: String!): CommunityResponse!
+  JoinCommunity(communityId: String!): JoinCommunityResponse!
   authenticate: AuthResponse!
   login(email: String!, password: String!): AuthResponse!
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): AuthResponse!
 }
 
+type Post {
+  content: String!
+  createdAt: DateTime!
+  id: String!
+  postedBy: User!
+  title: String!
+}
+
 type Query {
-  GetCommunityResponse(name: String!): GetCommunityResponse!
+  GetCommunity(name: String!): GetCommunityResponse!
   allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
-  user(email: String!): User!
+  user(email: String!): IUserQueryResult!
 }
 
 union RefreshResponse = AuthError | IRefresh
@@ -74,4 +146,20 @@ type User {
   email: String!
   id: String!
   name: String!
+  picture: String!
+}
+
+type Vote {
+  count: Int!
+  createdAt: DateTime!
+  id: String!
+  post: Post!
+  type: VoteType!
+  updatedAt: DateTime!
+  votedBy: User!
+}
+
+enum VoteType {
+  DOWNVOTE
+  UPVOTE
 }

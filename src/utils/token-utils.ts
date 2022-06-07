@@ -22,14 +22,14 @@ type IBuildToken = {
 // generate a new refresh token if it almost expires
 
 export function signAccessToken(payload: AccessTokenPayload): string {
-  // return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "5d" });
+  return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "5d" });
 
-  return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15s" });
+  // return jwt.sign(payload, ACCESS_SECRET, { expiresIn: "15s" });
 }
 
 export function signRefreshToken(payload: RefreshTokenPayload): string {
-  // return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "10d" });
-  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "1min" });
+  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "10d" });
+  // return jwt.sign(payload, REFRESH_SECRET, { expiresIn: "1min" });
 }
 
 export function buildTokens(id: string, tokenVersion: number): IBuildToken {

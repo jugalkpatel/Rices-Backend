@@ -14,6 +14,7 @@ const permissions = shield(
       CreateCommunity: isAuthenticated,
       authenticate: isAuthenticated,
       refresh: isRefreshTokenValid,
+      JoinCommunity: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }

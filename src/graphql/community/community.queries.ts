@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { extendType, nonNull, stringArg } from "nexus";
 import { Context } from "types";
 
@@ -27,25 +28,34 @@ export const allCommunities = extendType({
       },
     });
 
-    t.nonNull.field("GetCommunityResponse", {
+    t.nonNull.field("GetCommunity", {
       type: "GetCommunityResponse",
       args: {
         name: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, context: Context) => {
+      resolve: async (parent, args, context: Context) => {
         try {
           const { prisma } = context;
           const { name } = args;
 
           const community = await prisma.community.findUnique({
             where: { title: name },
-            include: { creator: true, members: true },
+            include: {
+              creator: { select: { id: true, name: true } },
+              members: { select: { id: true, name: true } },
+              posts: {
+                include: {
+                  postedBy: true,
+                },
+              },
+            },
           });
 
           if (!community) {
             return { message: "community not found!" };
           }
 
+          console.log("get community is called");
           return community;
         } catch (error) {
           return {
