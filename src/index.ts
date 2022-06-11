@@ -42,6 +42,7 @@ const PORT = process.env.PORT as string;
     // console.log(
     //   `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
     // );
+    console.log(`🚀 Server ready`);
   } catch (error) {
     console.error({ error });
   }
