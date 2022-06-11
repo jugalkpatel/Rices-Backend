@@ -1,5 +1,6 @@
 import { objectType, unionType } from "nexus";
 
+// base community type
 export const Community = objectType({
   name: "Community",
   isTypeOf: (data) => {
@@ -13,10 +14,11 @@ export const Community = objectType({
     t.nonNull.string("description");
     t.nonNull.string("banner");
     t.nonNull.string("picture");
-    t.nonNull.field("creator", { type: "CommunityCreator" });
-    t.list.field("posts", { type: "Post" });
+    t.nonNull.field("creator", { type: "User" });
+    t.list.nonNull.field("members", { type: "User" });
     t.nonNull.dateTime("createdAt");
     t.nonNull.dateTime("updatedAt");
+    t.list.field("posts", { type: "Post" });
   },
 });
 
@@ -60,11 +62,33 @@ export const CommunityCreator = objectType({
   },
 });
 
+// GetCommunity Types
 export const GetCommunityMember = objectType({
   name: "GetCommunityMember",
   definition: (t) => {
     t.nonNull.string("id");
     t.nonNull.string("name");
+  },
+});
+
+export const CommunityUser = objectType({
+  name: "CommunityUser",
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("name");
+    t.nonNull.string("email");
+    t.nonNull.string("picture");
+  },
+});
+
+export const CommunityPost = objectType({
+  name: "CommunityPost",
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("title");
+    t.nonNull.string("content");
+    t.nonNull.dateTime("createdAt");
+    t.nonNull.field("postedBy", { type: "CommunityUser" });
   },
 });
 
@@ -83,7 +107,7 @@ export const GetCommunityResult = objectType({
     t.nonNull.string("picture");
     t.nonNull.field("creator", { type: "CommunityCreator" });
     t.nonNull.list.field("members", { type: "GetCommunityMember" });
-    t.list.field("posts", { type: "Post" });
+    t.list.field("posts", { type: "CommunityPost" });
     t.nonNull.dateTime("createdAt");
     t.nonNull.dateTime("updatedAt");
   },
@@ -96,7 +120,7 @@ export const GetCommunityResponse = unionType({
   },
 });
 
-// join community
+// Join Community Types
 export const JoinCommunityResponse = unionType({
   name: "JoinCommunityResponse",
   definition: (t) => {

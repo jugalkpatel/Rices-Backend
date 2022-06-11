@@ -54,7 +54,6 @@ export const allCommunities = extendType({
             return { message: "community not found!" };
           }
 
-          console.log("get community is called");
           return community;
         } catch (error) {
           return {

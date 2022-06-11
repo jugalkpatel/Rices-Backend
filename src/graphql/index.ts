@@ -6,3 +6,4 @@ export * from "./scalars/Date";
 export * from "./vote";
 export * from "./post";
 export * from "./comment";
+export * from "./password";

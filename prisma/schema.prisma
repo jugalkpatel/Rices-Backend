@@ -11,19 +11,21 @@ datasource db {
 }
 
 model User {
-  id                 String      @id @default(uuid())
+  id                 String        @id @default(uuid())
   picture            String
-  email              String      @unique
+  email              String        @unique
   name               String
-  tokenVersion       Int         @default(1)
+  tokenVersion       Int           @default(1)
   password           Password?
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
-  joinedCommunities  Community[] @relation("PartOf")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  joinedCommunities  Community[]   @relation("PartOf")
   communitiesCreated Community[]
-  posts              Post[]      @relation("posted by")
-  votes              Vote[]      @relation("voted by")
+  posts              Post[]        @relation("posted by")
+  votes              Vote[]        @relation("voted by")
   commentedOn        Comment[]
+  bookmarks          Post[]        @relation("bookmark")
+  commentVotes       CommentVote[]
 }
 
 model Password {
@@ -48,16 +50,17 @@ model Community {
 }
 
 model Post {
-  id          String    @id @default(uuid())
-  title       String    @unique @db.VarChar(300)
-  content     String
-  createdAt   DateTime  @default(now())
-  postedBy    User      @relation(fields: [userId], references: [id], name: "posted by")
-  userId      String
-  community   Community @relation(fields: [communityId], references: [id], name: "postedIn")
-  communityId String
-  votes       Vote[]
-  comments    Comment[]
+  id           String    @id @default(uuid())
+  title        String    @unique @db.VarChar(300)
+  content      String
+  createdAt    DateTime  @default(now())
+  postedBy     User      @relation(fields: [userId], references: [id], name: "posted by")
+  userId       String
+  community    Community @relation(fields: [communityId], references: [id], name: "postedIn")
+  communityId  String
+  votes        Vote[]
+  comments     Comment[]
+  bookmarkedBy User[]    @relation("bookmark")
 }
 
 enum Type {
@@ -67,7 +70,6 @@ enum Type {
 
 model Vote {
   id        String   @id @default(uuid())
-  count     Int      @default(0)
   type      Type     @default(UPVOTE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,12 +80,25 @@ model Vote {
 }
 
 model Comment {
+  id        String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  text      String
+  user      User          @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post          @relation(fields: [postId], references: [id])
+  postId    String
+  votes     CommentVote[]
+}
+
+model CommentVote {
   id        String   @id @default(uuid())
+  text      String
+  type      Type     @default(UPVOTE)
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  votedBy   User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  text      String
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
+  commentId String
 }

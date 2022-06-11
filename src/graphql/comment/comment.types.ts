@@ -5,8 +5,8 @@ export const Comment = objectType({
   definition: (t) => {
     t.nonNull.string("id");
     t.nonNull.string("text");
-    t.field("user", { type: "User" });
-    t.field("post", { type: "Post" });
+    t.nonNull.field("user", { type: "User" });
+    t.nonNull.field("post", { type: "Post" });
     t.nonNull.dateTime("createdAt");
     t.nonNull.dateTime("updatedAt");
   },

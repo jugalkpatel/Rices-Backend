@@ -9,13 +9,17 @@ import { isAuthenticated, isRefreshTokenValid } from "./middlewares";
 
 const permissions = shield(
   {
-    Query: { user: isAuthenticated },
+    Query: {
+      user: isAuthenticated,
+      getUserCommunities: isAuthenticated,
+    },
     Mutation: {
       CreateCommunity: isAuthenticated,
       authenticate: isAuthenticated,
       refresh: isRefreshTokenValid,
       JoinCommunity: isAuthenticated,
       leaveCommunity: isAuthenticated,
+      createPost: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }

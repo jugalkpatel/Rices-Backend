@@ -1,4 +1,4 @@
-import { booleanArg, objectType, unionType } from "nexus";
+import { objectType, unionType } from "nexus";
 
 export const AuthError = objectType({
   name: "AuthError",
@@ -12,6 +12,16 @@ export const AuthError = objectType({
   },
 });
 
+export const AuthUser = objectType({
+  name: "AuthUser",
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("name");
+    t.nonNull.string("email");
+    t.nonNull.string("picture");
+  },
+});
+
 export const AuthPayload = objectType({
   name: "AuthPayload",
   isTypeOf: (data) => {
@@ -21,7 +31,7 @@ export const AuthPayload = objectType({
   },
   definition: (t) => {
     // t.nonNull.string("token");
-    t.nonNull.field("user", { type: "User" });
+    t.nonNull.field("user", { type: "AuthUser" });
   },
 });
 

@@ -1,4 +1,4 @@
-import { objectType, list, unionType, enumType, arg, nonNull } from "nexus";
+import { objectType, enumType } from "nexus";
 
 export const VoteType = enumType({
   name: "VoteType",
@@ -9,7 +9,6 @@ export const Vote = objectType({
   name: "Vote",
   definition: (t) => {
     t.nonNull.string("id");
-    t.nonNull.int("count");
     t.nonNull.field("type", { type: VoteType });
     t.nonNull.dateTime("createdAt");
     t.nonNull.dateTime("updatedAt");

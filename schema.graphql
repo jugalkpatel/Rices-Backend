@@ -13,18 +13,25 @@ type AuthError implements CommonError {
 }
 
 type AuthPayload {
-  user: User!
+  user: AuthUser!
 }
 
 union AuthResponse = AuthError | AuthPayload
 
+type AuthUser {
+  email: String!
+  id: String!
+  name: String!
+  picture: String!
+}
+
 type Comment {
   createdAt: DateTime!
   id: String!
-  post: Post
+  post: Post!
   text: String!
   updatedAt: DateTime!
-  user: User
+  user: User!
 }
 
 interface CommonError {
@@ -34,9 +41,10 @@ interface CommonError {
 type Community {
   banner: String!
   createdAt: DateTime!
-  creator: CommunityCreator!
+  creator: User!
   description: String!
   id: String!
+  members: [User!]
   picture: String!
   posts: [Post]
   title: String!
@@ -56,13 +64,28 @@ type CommunityPost {
   content: String!
   createdAt: DateTime!
   id: String!
-  postedBy: User!
+  postedBy: CommunityUser!
   title: String!
 }
 
 union CommunityResponse = CommunityError | CommunityResult
 
 type CommunityResult {
+  id: String!
+  title: String!
+}
+
+type CommunityUser {
+  email: String!
+  id: String!
+  name: String!
+  picture: String!
+}
+
+union CreatePostResponse = CreatePostResult | PostError
+
+type CreatePostResult {
+  community: String!
   id: String!
   title: String!
 }
@@ -87,13 +110,67 @@ type GetCommunityResult {
   id: String!
   members: [GetCommunityMember]!
   picture: String!
-  posts: [Post]
+  posts: [CommunityPost]
   title: String!
   updatedAt: DateTime!
 }
 
+union GetPostResponse = IPostType | PostError
+
+union GetUserCommunitiesResponse = IUserCommunites | UserError
+
+type ICommonVote {
+  id: String!
+  type: VoteType!
+  votedBy: IUserWithID!
+}
+
 type IJoinCommunityMember {
   id: String!
+}
+
+interface IPost {
+  content: String!
+  createdAt: DateTime!
+  id: String!
+  title: String!
+}
+
+type IPostComment {
+  createdAt: DateTime!
+  id: String!
+  text: String!
+  updatedAt: DateTime!
+  user: IPostUser!
+  votes: [ICommonVote!]
+}
+
+type IPostCommunity {
+  banner: String!
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  members: [IUserWithID!]
+  picture: String!
+  title: String!
+}
+
+type IPostType implements IPost {
+  bookmarkedBy: [IUserWithID]
+  comments: [IPostComment]
+  community: IPostCommunity!
+  content: String!
+  createdAt: DateTime!
+  id: String!
+  postedBy: IPostUser!
+  title: String!
+  votes: [ICommonVote!]
+}
+
+type IPostUser {
+  id: String!
+  name: String!
+  picture: String!
 }
 
 type IRefresh {
@@ -104,10 +181,25 @@ type IUser {
   id: String!
 }
 
+type IUserCommunites {
+  communities: [IUserCommunity]
+  id: String!
+}
+
+type IUserCommunity {
+  id: String!
+  picture: String!
+  title: String!
+}
+
 type IUserQueryResult {
   id: String!
   joinedCommunities: [IUser]!
   name: String!
+}
+
+type IUserWithID {
+  id: String!
 }
 
 union JoinCommunityResponse = CommunityError | IJoinCommunityMember
@@ -120,38 +212,66 @@ type Mutation {
   CreateCommunity(description: String!, name: String!): CommunityResponse!
   JoinCommunity(communityId: String!): JoinCommunityResponse!
   authenticate: AuthResponse!
+  createPost(community: String!, content: String!, title: String!): CreatePostResponse!
   leaveCommunity(communityId: String!): JoinCommunityResponse!
   login(email: String!, password: String!): AuthResponse!
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): AuthResponse!
 }
 
-type Post {
+type Password {
+  id: String!
+  password: String!
+  user: User!
+}
+
+type Post implements IPost {
+  comments: [Comment]
+  community: Community!
   content: String!
   createdAt: DateTime!
   id: String!
   postedBy: User!
   title: String!
+  votes: [Vote]
+}
+
+type PostError implements CommonError {
+  message: String!
 }
 
 type Query {
   GetCommunity(name: String!): GetCommunityResponse!
   allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
+  getPost(postId: String!): GetPostResponse!
+  getUserCommunities: GetUserCommunitiesResponse!
   user(email: String!): IUserQueryResult!
 }
 
 union RefreshResponse = AuthError | IRefresh
 
 type User {
+  commentedOn: [Comment]
+  communitiesCreated: [Community]
+  createdAt: DateTime!
   email: String!
   id: String!
+  joinedCommunities: [Community]
   name: String!
+  password: Password!
   picture: String!
+  posts: [Post]
+  tokenVersion: Int!
+  updatedAt: DateTime!
+  votes: [Vote]
+}
+
+type UserError implements CommonError {
+  message: String!
 }
 
 type Vote {
-  count: Int!
   createdAt: DateTime!
   id: String!
   post: Post!

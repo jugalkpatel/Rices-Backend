@@ -7,6 +7,10 @@ import cookieParser from "cookie-parser";
 import { schemaWithPermissions } from "./schema";
 import { context } from "./context";
 
+const ORIGIN_1 = process.env.ORIGIN_1 as string;
+const ORIGIN_2 = process.env.ORIGIN_2 as string;
+const PORT = process.env.PORT as string;
+
 (async () => {
   try {
     const app = express();
@@ -27,17 +31,17 @@ import { context } from "./context";
       path: "/",
       cors: {
         credentials: true,
-        origin: ["http://localhost:3000", "https://studio.apollographql.com"],
+        origin: [ORIGIN_1, ORIGIN_2],
       },
     });
 
     await new Promise<void>((resolve) =>
-      httpServer.listen({ port: 4000 }, resolve)
+      httpServer.listen({ port: PORT || 3000 }, resolve)
     );
 
-    console.log(
-      `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
-    );
+    // console.log(
+    //   `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
+    // );
   } catch (error) {
     console.error({ error });
   }
