@@ -11,6 +11,7 @@ const ORIGIN_1 = process.env.ORIGIN_1 as string;
 const ORIGIN_2 = process.env.ORIGIN_2 as string;
 // const PORT = process.env.PORT as string;
 
+    // "build": "prisma migrate deploy && prisma generate && npm run generate && tsc",
 // "build": "prisma generate && npm run generate && tsc",
 (async () => {
   try {
