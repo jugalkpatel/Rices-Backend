@@ -22,6 +22,7 @@ const ORIGIN_2 = process.env.ORIGIN_2 as string;
     const server = new ApolloServer({
       context,
       schema: schemaWithPermissions,
+      introspection: true,
       plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     });
 
