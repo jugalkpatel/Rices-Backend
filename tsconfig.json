@@ -5,10 +5,11 @@
     "lib": ["esnext"],
     "strict": true,
     "rootDir": ".",
-    "outDir": "dist",
+    "outDir": "./dist",
     "sourceMap": true,
     "esModuleInterop": true,
     "baseUrl": "./src",
+    "skipLibCheck": true,
     "paths": {
       "@middlewares": ["middlewares/*"]
       // "types": ["types.d.ts"]

@@ -410,10 +410,10 @@ export interface NexusGenFieldTypes {
     members: Array<NexusGenRootTypes['IJoinCommunityMember'] | null>; // [IJoinCommunityMember]!
   }
   Mutation: { // field return type
-    CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
-    JoinCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    CreateCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     createPost: NexusGenRootTypes['CreatePostResponse']; // CreatePostResponse!
+    JoinCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     leaveCommunity: NexusGenRootTypes['JoinCommunityResponse']; // JoinCommunityResponse!
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
@@ -438,9 +438,9 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   Query: { // field return type
-    GetCommunity: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
     allCommunities: NexusGenRootTypes['AllCommunitiesResponse']; // AllCommunitiesResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    GetCommunity: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
     getPost: NexusGenRootTypes['GetPostResponse']; // GetPostResponse!
     getUserCommunities: NexusGenRootTypes['GetUserCommunitiesResponse']; // GetUserCommunitiesResponse!
     user: NexusGenRootTypes['IUserQueryResult']; // IUserQueryResult!
@@ -631,10 +631,10 @@ export interface NexusGenFieldTypeNames {
     members: 'IJoinCommunityMember'
   }
   Mutation: { // field return type name
-    CreateCommunity: 'CommunityResponse'
-    JoinCommunity: 'JoinCommunityResponse'
     authenticate: 'AuthResponse'
+    CreateCommunity: 'CommunityResponse'
     createPost: 'CreatePostResponse'
+    JoinCommunity: 'JoinCommunityResponse'
     leaveCommunity: 'JoinCommunityResponse'
     login: 'AuthResponse'
     refresh: 'RefreshResponse'
@@ -659,9 +659,9 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   Query: { // field return type name
-    GetCommunity: 'GetCommunityResponse'
     allCommunities: 'AllCommunitiesResponse'
     authenticate: 'AuthResponse'
+    GetCommunity: 'GetCommunityResponse'
     getPost: 'GetPostResponse'
     getUserCommunities: 'GetUserCommunitiesResponse'
     user: 'IUserQueryResult'
@@ -709,13 +709,13 @@ export interface NexusGenArgTypes {
       description: string; // String!
       name: string; // String!
     }
-    JoinCommunity: { // args
-      communityId: string; // String!
-    }
     createPost: { // args
       community: string; // String!
       content: string; // String!
       title: string; // String!
+    }
+    JoinCommunity: { // args
+      communityId: string; // String!
     }
     leaveCommunity: { // args
       communityId: string; // String!

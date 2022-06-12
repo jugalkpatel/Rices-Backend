@@ -209,10 +209,10 @@ type JoinCommunityResult {
 }
 
 type Mutation {
-  CreateCommunity(description: String!, name: String!): CommunityResponse!
-  JoinCommunity(communityId: String!): JoinCommunityResponse!
   authenticate: AuthResponse!
+  CreateCommunity(description: String!, name: String!): CommunityResponse!
   createPost(community: String!, content: String!, title: String!): CreatePostResponse!
+  JoinCommunity(communityId: String!): JoinCommunityResponse!
   leaveCommunity(communityId: String!): JoinCommunityResponse!
   login(email: String!, password: String!): AuthResponse!
   refresh: RefreshResponse!
@@ -241,9 +241,9 @@ type PostError implements CommonError {
 }
 
 type Query {
-  GetCommunity(name: String!): GetCommunityResponse!
   allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
+  GetCommunity(name: String!): GetCommunityResponse!
   getPost(postId: String!): GetPostResponse!
   getUserCommunities: GetUserCommunitiesResponse!
   user(email: String!): IUserQueryResult!
