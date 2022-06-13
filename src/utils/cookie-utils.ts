@@ -9,8 +9,8 @@ export enum CookieNames {
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: true,
-  // sameSite: "none",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "none",
 };
 
 export function setCookies(
