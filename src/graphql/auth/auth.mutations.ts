@@ -49,6 +49,8 @@ export const AuthMutation = extendType({
 
         setCookies(response, user.id, tokenVersion);
 
+        console.log({ response });
+
         return {
           user,
         };
