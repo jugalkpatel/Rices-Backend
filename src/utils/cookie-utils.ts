@@ -10,7 +10,7 @@ export enum CookieNames {
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "none",
+  // sameSite: "none",
 };
 
 export function setCookies(
