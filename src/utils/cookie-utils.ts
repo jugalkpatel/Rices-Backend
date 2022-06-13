@@ -19,7 +19,8 @@ export function setCookies(
   tokenVersion: number
 ) {
   const { accessToken, refreshToken } = buildTokens(userId, tokenVersion);
-  console.log({ accessToken, refreshToken });
+
+  console.log(process.env.NODE_ENV);
   res.cookie(CookieNames.ACCESS, accessToken, {
     ...cookieOptions,
     maxAge: 1000 * 60 * 60 * 24 * 3, // 3 days
