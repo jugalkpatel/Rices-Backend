@@ -1,4 +1,17 @@
-import { objectType, unionType } from "nexus";
+import { interfaceType, objectType, unionType } from "nexus";
+
+export const ICommunity = interfaceType({
+  name: "ICommunity",
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("title");
+    t.nonNull.dateTime("createdAt");
+    t.nonNull.string("banner");
+    t.nonNull.string("description");
+    t.nonNull.dateTime("updatedAt");
+    t.nonNull.string("picture");
+  },
+});
 
 // base community type
 export const Community = objectType({
@@ -9,15 +22,9 @@ export const Community = objectType({
     return isTypeValid;
   },
   definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("description");
-    t.nonNull.string("banner");
-    t.nonNull.string("picture");
+    t.implements("ICommunity");
     t.nonNull.field("creator", { type: "User" });
     t.list.nonNull.field("members", { type: "User" });
-    t.nonNull.dateTime("createdAt");
-    t.nonNull.dateTime("updatedAt");
     t.list.field("posts", { type: "Post" });
   },
 });
@@ -54,30 +61,11 @@ export const CommunityResponse = unionType({
   },
 });
 
-export const CommunityCreator = objectType({
-  name: "CommunityCreator",
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("name");
-  },
-});
-
-// GetCommunity Types
-export const GetCommunityMember = objectType({
-  name: "GetCommunityMember",
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("name");
-  },
-});
-
+// Fetch Community Types
 export const CommunityUser = objectType({
   name: "CommunityUser",
   definition: (t) => {
     t.nonNull.string("id");
-    t.nonNull.string("name");
-    t.nonNull.string("email");
-    t.nonNull.string("picture");
   },
 });
 
@@ -85,40 +73,51 @@ export const CommunityPost = objectType({
   name: "CommunityPost",
   definition: (t) => {
     t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("content");
-    t.nonNull.dateTime("createdAt");
-    t.nonNull.field("postedBy", { type: "CommunityUser" });
   },
 });
 
-export const GetCommunityResult = objectType({
-  name: "GetCommunityResult",
+export const FetchCommunityResult = objectType({
+  name: "FetchCommunityResult",
   isTypeOf: (data) => {
     const isTypeValid = "creator" in data ? true : false;
 
     return isTypeValid;
   },
   definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("description");
-    t.nonNull.string("banner");
-    t.nonNull.string("picture");
-    t.nonNull.field("creator", { type: "CommunityCreator" });
-    t.nonNull.list.field("members", { type: "GetCommunityMember" });
-    t.list.field("posts", { type: "CommunityPost" });
-    t.nonNull.dateTime("createdAt");
-    t.nonNull.dateTime("updatedAt");
+    t.implements("ICommunity");
+    t.nonNull.field("creator", { type: "CommunityUser" });
+    t.nonNull.list.field("members", { type: "CommunityUser" });
+    t.list.field("posts", { type: "IPostType" });
   },
 });
 
-export const GetCommunityResponse = unionType({
-  name: "GetCommunityResponse",
+export const FetchCommunityResponse = unionType({
+  name: "FetchCommunityResponse",
   definition: (t) => {
-    t.members("GetCommunityResult", "CommunityError");
+    t.members("FetchCommunityResult", "CommunityError");
   },
 });
+
+// // fetchCommunityWithPosts
+// export const fetchCommunityWithPostsResult = objectType({
+//   name: "FetchCommunityWithPostsResult",
+//   isTypeOf: (data) => {
+//     const isTypeValid = "posts" in data ? true : false;
+
+//     return isTypeValid;
+//   },
+//   definition: (t) => {
+//     t.nonNull.string("id");
+//     t.list.field("posts", { type: "IPostType" });
+//   },
+// });
+
+// export const FetchCommunityWithPostsResponse = unionType({
+//   name: "FetchCommunityWithPostsResponse",
+//   definition: (t) => {
+//     t.members("FetchCommunityWithPostsResult", "CommunityError");
+//   },
+// });
 
 // Join Community Types
 export const JoinCommunityResponse = unionType({

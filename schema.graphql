@@ -38,7 +38,7 @@ interface CommonError {
   message: String!
 }
 
-type Community {
+type Community implements ICommunity {
   banner: String!
   createdAt: DateTime!
   creator: User!
@@ -51,21 +51,12 @@ type Community {
   updatedAt: DateTime!
 }
 
-type CommunityCreator {
-  id: String!
-  name: String!
-}
-
 type CommunityError implements CommonError {
   message: String!
 }
 
 type CommunityPost {
-  content: String!
-  createdAt: DateTime!
   id: String!
-  postedBy: CommunityUser!
-  title: String!
 }
 
 union CommunityResponse = CommunityError | CommunityResult
@@ -76,10 +67,7 @@ type CommunityResult {
 }
 
 type CommunityUser {
-  email: String!
   id: String!
-  name: String!
-  picture: String!
 }
 
 union CreatePostResponse = CreatePostResult | PostError
@@ -95,22 +83,17 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-type GetCommunityMember {
-  id: String!
-  name: String!
-}
+union FetchCommunityResponse = CommunityError | FetchCommunityResult
 
-union GetCommunityResponse = CommunityError | GetCommunityResult
-
-type GetCommunityResult {
+type FetchCommunityResult implements ICommunity {
   banner: String!
   createdAt: DateTime!
-  creator: CommunityCreator!
+  creator: CommunityUser!
   description: String!
   id: String!
-  members: [GetCommunityMember]!
+  members: [CommunityUser]!
   picture: String!
-  posts: [CommunityPost]
+  posts: [IPostType]
   title: String!
   updatedAt: DateTime!
 }
@@ -123,6 +106,16 @@ type ICommonVote {
   id: String!
   type: VoteType!
   votedBy: IUserWithID!
+}
+
+interface ICommunity {
+  banner: String!
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  picture: String!
+  title: String!
+  updatedAt: DateTime!
 }
 
 type IJoinCommunityMember {
@@ -145,14 +138,14 @@ type IPostComment {
   votes: [ICommonVote!]
 }
 
-type IPostCommunity {
+type IPostCommunity implements ICommunity {
   banner: String!
   createdAt: DateTime!
   description: String!
   id: String!
-  members: [IUserWithID!]
   picture: String!
   title: String!
+  updatedAt: DateTime!
 }
 
 type IPostType implements IPost {
@@ -241,9 +234,9 @@ type PostError implements CommonError {
 }
 
 type Query {
-  GetCommunity(name: String!): GetCommunityResponse!
   allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
+  fetchCommunity(name: String!): FetchCommunityResponse!
   getPost(postId: String!): GetPostResponse!
   getUserCommunities: GetUserCommunitiesResponse!
   user(email: String!): IUserQueryResult!

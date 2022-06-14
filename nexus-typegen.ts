@@ -80,48 +80,33 @@ export interface NexusGenObjects {
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
-  CommunityCreator: { // root type
-    id: string; // String!
-    name: string; // String!
-  }
   CommunityError: { // root type
     message: string; // String!
   }
   CommunityPost: { // root type
-    content: string; // String!
-    createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // String!
-    postedBy: NexusGenRootTypes['CommunityUser']; // CommunityUser!
-    title: string; // String!
   }
   CommunityResult: { // root type
     id: string; // String!
     title: string; // String!
   }
   CommunityUser: { // root type
-    email: string; // String!
     id: string; // String!
-    name: string; // String!
-    picture: string; // String!
   }
   CreatePostResult: { // root type
     community: string; // String!
     id: string; // String!
     title: string; // String!
   }
-  GetCommunityMember: { // root type
-    id: string; // String!
-    name: string; // String!
-  }
-  GetCommunityResult: { // root type
+  FetchCommunityResult: { // root type
     banner: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
+    creator: NexusGenRootTypes['CommunityUser']; // CommunityUser!
     description: string; // String!
     id: string; // String!
-    members: Array<NexusGenRootTypes['GetCommunityMember'] | null>; // [GetCommunityMember]!
+    members: Array<NexusGenRootTypes['CommunityUser'] | null>; // [CommunityUser]!
     picture: string; // String!
-    posts?: Array<NexusGenRootTypes['CommunityPost'] | null> | null; // [CommunityPost]
+    posts?: Array<NexusGenRootTypes['IPostType'] | null> | null; // [IPostType]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
@@ -146,9 +131,9 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: string; // String!
-    members?: NexusGenRootTypes['IUserWithID'][] | null; // [IUserWithID!]
     picture: string; // String!
     title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   IPostType: { // root type
     bookmarkedBy?: Array<NexusGenRootTypes['IUserWithID'] | null> | null; // [IUserWithID]
@@ -242,6 +227,7 @@ export interface NexusGenObjects {
 
 export interface NexusGenInterfaces {
   CommonError: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['PostError'] | NexusGenRootTypes['UserError'];
+  ICommunity: NexusGenRootTypes['Community'] | NexusGenRootTypes['FetchCommunityResult'] | NexusGenRootTypes['IPostCommunity'];
   IPost: NexusGenRootTypes['IPostType'] | NexusGenRootTypes['Post'];
 }
 
@@ -250,7 +236,7 @@ export interface NexusGenUnions {
   AuthResponse: NexusGenRootTypes['AuthError'] | NexusGenRootTypes['AuthPayload'];
   CommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['CommunityResult'];
   CreatePostResponse: NexusGenRootTypes['CreatePostResult'] | NexusGenRootTypes['PostError'];
-  GetCommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['GetCommunityResult'];
+  FetchCommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['FetchCommunityResult'];
   GetPostResponse: NexusGenRootTypes['IPostType'] | NexusGenRootTypes['PostError'];
   GetUserCommunitiesResponse: NexusGenRootTypes['IUserCommunites'] | NexusGenRootTypes['UserError'];
   JoinCommunityResponse: NexusGenRootTypes['CommunityError'] | NexusGenRootTypes['IJoinCommunityMember'];
@@ -297,48 +283,33 @@ export interface NexusGenFieldTypes {
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
-  CommunityCreator: { // field return type
-    id: string; // String!
-    name: string; // String!
-  }
   CommunityError: { // field return type
     message: string; // String!
   }
   CommunityPost: { // field return type
-    content: string; // String!
-    createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // String!
-    postedBy: NexusGenRootTypes['CommunityUser']; // CommunityUser!
-    title: string; // String!
   }
   CommunityResult: { // field return type
     id: string; // String!
     title: string; // String!
   }
   CommunityUser: { // field return type
-    email: string; // String!
     id: string; // String!
-    name: string; // String!
-    picture: string; // String!
   }
   CreatePostResult: { // field return type
     community: string; // String!
     id: string; // String!
     title: string; // String!
   }
-  GetCommunityMember: { // field return type
-    id: string; // String!
-    name: string; // String!
-  }
-  GetCommunityResult: { // field return type
+  FetchCommunityResult: { // field return type
     banner: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    creator: NexusGenRootTypes['CommunityCreator']; // CommunityCreator!
+    creator: NexusGenRootTypes['CommunityUser']; // CommunityUser!
     description: string; // String!
     id: string; // String!
-    members: Array<NexusGenRootTypes['GetCommunityMember'] | null>; // [GetCommunityMember]!
+    members: Array<NexusGenRootTypes['CommunityUser'] | null>; // [CommunityUser]!
     picture: string; // String!
-    posts: Array<NexusGenRootTypes['CommunityPost'] | null> | null; // [CommunityPost]
+    posts: Array<NexusGenRootTypes['IPostType'] | null> | null; // [IPostType]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
@@ -363,9 +334,9 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id: string; // String!
-    members: NexusGenRootTypes['IUserWithID'][] | null; // [IUserWithID!]
     picture: string; // String!
     title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   IPostType: { // field return type
     bookmarkedBy: Array<NexusGenRootTypes['IUserWithID'] | null> | null; // [IUserWithID]
@@ -438,9 +409,9 @@ export interface NexusGenFieldTypes {
     message: string; // String!
   }
   Query: { // field return type
-    GetCommunity: NexusGenRootTypes['GetCommunityResponse']; // GetCommunityResponse!
     allCommunities: NexusGenRootTypes['AllCommunitiesResponse']; // AllCommunitiesResponse!
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    fetchCommunity: NexusGenRootTypes['FetchCommunityResponse']; // FetchCommunityResponse!
     getPost: NexusGenRootTypes['GetPostResponse']; // GetPostResponse!
     getUserCommunities: NexusGenRootTypes['GetUserCommunitiesResponse']; // GetUserCommunitiesResponse!
     user: NexusGenRootTypes['IUserQueryResult']; // IUserQueryResult!
@@ -473,6 +444,15 @@ export interface NexusGenFieldTypes {
   }
   CommonError: { // field return type
     message: string; // String!
+  }
+  ICommunity: { // field return type
+    banner: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string; // String!
+    id: string; // String!
+    picture: string; // String!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   IPost: { // field return type
     content: string; // String!
@@ -518,48 +498,33 @@ export interface NexusGenFieldTypeNames {
     title: 'String'
     updatedAt: 'DateTime'
   }
-  CommunityCreator: { // field return type name
-    id: 'String'
-    name: 'String'
-  }
   CommunityError: { // field return type name
     message: 'String'
   }
   CommunityPost: { // field return type name
-    content: 'String'
-    createdAt: 'DateTime'
     id: 'String'
-    postedBy: 'CommunityUser'
-    title: 'String'
   }
   CommunityResult: { // field return type name
     id: 'String'
     title: 'String'
   }
   CommunityUser: { // field return type name
-    email: 'String'
     id: 'String'
-    name: 'String'
-    picture: 'String'
   }
   CreatePostResult: { // field return type name
     community: 'String'
     id: 'String'
     title: 'String'
   }
-  GetCommunityMember: { // field return type name
-    id: 'String'
-    name: 'String'
-  }
-  GetCommunityResult: { // field return type name
+  FetchCommunityResult: { // field return type name
     banner: 'String'
     createdAt: 'DateTime'
-    creator: 'CommunityCreator'
+    creator: 'CommunityUser'
     description: 'String'
     id: 'String'
-    members: 'GetCommunityMember'
+    members: 'CommunityUser'
     picture: 'String'
-    posts: 'CommunityPost'
+    posts: 'IPostType'
     title: 'String'
     updatedAt: 'DateTime'
   }
@@ -584,9 +549,9 @@ export interface NexusGenFieldTypeNames {
     createdAt: 'DateTime'
     description: 'String'
     id: 'String'
-    members: 'IUserWithID'
     picture: 'String'
     title: 'String'
+    updatedAt: 'DateTime'
   }
   IPostType: { // field return type name
     bookmarkedBy: 'IUserWithID'
@@ -659,9 +624,9 @@ export interface NexusGenFieldTypeNames {
     message: 'String'
   }
   Query: { // field return type name
-    GetCommunity: 'GetCommunityResponse'
     allCommunities: 'AllCommunitiesResponse'
     authenticate: 'AuthResponse'
+    fetchCommunity: 'FetchCommunityResponse'
     getPost: 'GetPostResponse'
     getUserCommunities: 'GetUserCommunitiesResponse'
     user: 'IUserQueryResult'
@@ -694,6 +659,15 @@ export interface NexusGenFieldTypeNames {
   }
   CommonError: { // field return type name
     message: 'String'
+  }
+  ICommunity: { // field return type name
+    banner: 'String'
+    createdAt: 'DateTime'
+    description: 'String'
+    id: 'String'
+    picture: 'String'
+    title: 'String'
+    updatedAt: 'DateTime'
   }
   IPost: { // field return type name
     content: 'String'
@@ -731,7 +705,7 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    GetCommunity: { // args
+    fetchCommunity: { // args
       name: string; // String!
     }
     getPost: { // args
@@ -748,18 +722,22 @@ export interface NexusGenAbstractTypeMembers {
   AuthResponse: "AuthError" | "AuthPayload"
   CommunityResponse: "CommunityError" | "CommunityResult"
   CreatePostResponse: "CreatePostResult" | "PostError"
-  GetCommunityResponse: "CommunityError" | "GetCommunityResult"
+  FetchCommunityResponse: "CommunityError" | "FetchCommunityResult"
   GetPostResponse: "IPostType" | "PostError"
   GetUserCommunitiesResponse: "IUserCommunites" | "UserError"
   JoinCommunityResponse: "CommunityError" | "IJoinCommunityMember"
   RefreshResponse: "AuthError" | "IRefresh"
   CommonError: "AuthError" | "CommunityError" | "PostError" | "UserError"
+  ICommunity: "Community" | "FetchCommunityResult" | "IPostCommunity"
   IPost: "IPostType" | "Post"
 }
 
 export interface NexusGenTypeInterfaces {
   AuthError: "CommonError"
+  Community: "ICommunity"
   CommunityError: "CommonError"
+  FetchCommunityResult: "ICommunity"
+  IPostCommunity: "ICommunity"
   IPostType: "IPost"
   Post: "IPost"
   PostError: "CommonError"
@@ -778,7 +756,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult" | "CreatePostResult" | "GetCommunityResult" | "IJoinCommunityMember" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "PostError" | "UserError";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthError" | "AuthPayload" | "Community" | "CommunityError" | "CommunityResult" | "CreatePostResult" | "FetchCommunityResult" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "PostError" | "UserError";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

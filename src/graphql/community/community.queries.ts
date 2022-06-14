@@ -27,8 +27,8 @@ export const allCommunities = extendType({
       },
     });
 
-    t.nonNull.field("GetCommunity", {
-      type: "GetCommunityResponse",
+    t.nonNull.field("fetchCommunity", {
+      type: "FetchCommunityResponse",
       args: {
         name: nonNull(stringArg()),
       },
@@ -40,11 +40,38 @@ export const allCommunities = extendType({
           const community = await prisma.community.findUnique({
             where: { title: name },
             include: {
-              creator: { select: { id: true, name: true } },
-              members: { select: { id: true, name: true } },
+              creator: { select: { id: true } },
+              members: { select: { id: true } },
               posts: {
                 include: {
-                  postedBy: true,
+                  community: {
+                    select: {
+                      id: true,
+                      title: true,
+                      banner: true,
+                      picture: true,
+                      createdAt: true,
+                      description: true,
+                      updatedAt: true,
+                    },
+                  },
+                  postedBy: { select: { id: true, name: true, picture: true } },
+                  votes: {
+                    select: {
+                      id: true,
+                      type: true,
+                      votedBy: { select: { id: true } },
+                    },
+                  },
+                  comments: {
+                    include: {
+                      user: { select: { id: true, name: true, picture: true } },
+                      votes: {
+                        select: { id: true, type: true, votedBy: true },
+                      },
+                    },
+                  },
+                  bookmarkedBy: { select: { id: true } },
                 },
               },
             },
@@ -62,5 +89,59 @@ export const allCommunities = extendType({
         }
       },
     });
+
+    // t.nonNull.field("fetchCommunityWithPosts", {
+    //   type: "FetchCommunityWithPostsResponse",
+    //   args: {
+    //     name: nonNull(stringArg()),
+    //   },
+    //   resolve: async (parent, args, context: Context) => {
+    //     try {
+    //       const { prisma } = context;
+    //       const { name } = args;
+
+    //       const community = await prisma.community.findUnique({
+    //         where: { title: name },
+    //         include: {
+    //           posts: {
+    //             include: {
+    //               community: { select: { id: true } },
+    //               postedBy: { select: { id: true, name: true, picture: true } },
+    //               votes: {
+    //                 select: {
+    //                   id: true,
+    //                   type: true,
+    //                   votedBy: { select: { id: true } },
+    //                 },
+    //               },
+    //               comments: {
+    //                 include: {
+    //                   user: { select: { id: true, name: true, picture: true } },
+    //                   votes: {
+    //                     select: { id: true, type: true, votedBy: true },
+    //                   },
+    //                 },
+    //               },
+    //               bookmarkedBy: { select: { id: true } },
+    //             },
+    //           },
+    //         },
+    //       });
+
+    //       if (!community || !community.id) {
+    //         throw new Error();
+    //       }
+
+    //       const { id, posts } = community;
+
+    //       return {
+    //         id,
+    //         posts,
+    //       };
+    //     } catch (error) {
+    //       return { message: "error occurred while fetching community" };
+    //     }
+    //   },
+    // });
   },
 });

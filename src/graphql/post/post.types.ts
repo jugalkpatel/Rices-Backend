@@ -55,15 +55,14 @@ export const IUserWithID = objectType({
 });
 
 export const IPostCommunity = objectType({
+  isTypeOf: (data) => {
+    const isTypeValid = "creator" in data ? true : false;
+
+    return isTypeValid;
+  },
   name: "IPostCommunity",
   definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("picture");
-    t.nonNull.string("banner");
-    t.nonNull.string("description");
-    t.list.nonNull.field("members", { type: "IUserWithID" });
-    t.nonNull.dateTime("createdAt");
+    t.implements("ICommunity");
   },
 });
 
