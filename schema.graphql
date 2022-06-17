@@ -28,10 +28,15 @@ type AuthUser {
 type Comment {
   createdAt: DateTime!
   id: String!
-  post: Post!
+  post: PostWithId!
   text: String!
   updatedAt: DateTime!
-  user: User!
+  user: IPostUser!
+  votes: [ICommonVote]
+}
+
+type CommentError implements CommonError {
+  message: String!
 }
 
 interface CommonError {
@@ -70,6 +75,8 @@ type CommunityUser {
   id: String!
 }
 
+union CreateCommentResponse = Comment | CommentError
+
 union CreatePostResponse = CreatePostResult | PostError
 
 type CreatePostResult {
@@ -98,7 +105,14 @@ type FetchCommunityResult implements ICommunity {
   updatedAt: DateTime!
 }
 
-union GetPostResponse = IPostType | PostError
+union FetchPostCommentsResponse = CommentError | FetchPostCommentsResult
+
+type FetchPostCommentsResult {
+  comments: [Comment]
+  postId: String!
+}
+
+union FetchPostResponse = IPostType | PostError
 
 union GetUserCommunitiesResponse = IUserCommunites | UserError
 
@@ -129,15 +143,6 @@ interface IPost {
   title: String!
 }
 
-type IPostComment {
-  createdAt: DateTime!
-  id: String!
-  text: String!
-  updatedAt: DateTime!
-  user: IPostUser!
-  votes: [ICommonVote!]
-}
-
 type IPostCommunity implements ICommunity {
   banner: String!
   createdAt: DateTime!
@@ -150,7 +155,7 @@ type IPostCommunity implements ICommunity {
 
 type IPostType implements IPost {
   bookmarkedBy: [IUserWithID]
-  comments: [IPostComment]
+  comments: [Comment]
   community: IPostCommunity!
   content: String!
   createdAt: DateTime!
@@ -205,6 +210,7 @@ type Mutation {
   CreateCommunity(description: String!, name: String!): CommunityResponse!
   JoinCommunity(communityId: String!): JoinCommunityResponse!
   authenticate: AuthResponse!
+  createComment(postId: String!, text: String!): CreateCommentResponse!
   createPost(community: String!, content: String!, title: String!): CreatePostResponse!
   leaveCommunity(communityId: String!): JoinCommunityResponse!
   login(email: String!, password: String!): AuthResponse!
@@ -233,11 +239,16 @@ type PostError implements CommonError {
   message: String!
 }
 
+type PostWithId {
+  id: String!
+}
+
 type Query {
   allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
   fetchCommunity(name: String!): FetchCommunityResponse!
-  getPost(postId: String!): GetPostResponse!
+  fetchPost(postId: String!): FetchPostResponse!
+  fetchPostComments(postId: String!): FetchPostCommentsResponse!
   getUserCommunities: GetUserCommunitiesResponse!
   user(email: String!): IUserQueryResult!
 }

@@ -1,11 +1,12 @@
 import { extendType, nonNull, stringArg } from "nexus";
+
 import { Context } from "types";
 
-export const getPost = extendType({
+export const postQueries = extendType({
   type: "Query",
   definition: (t) => {
-    t.nonNull.field("getPost", {
-      type: "GetPostResponse",
+    t.nonNull.field("fetchPost", {
+      type: "FetchPostResponse",
       args: {
         postId: nonNull(stringArg()),
       },
@@ -21,17 +22,16 @@ export const getPost = extendType({
           const post = await prisma.post.findUnique({
             where: { id: postId },
             include: {
+              bookmarkedBy: { select: { id: true } },
               community: {
                 select: {
                   id: true,
                   title: true,
-                  banner: true,
+                  description: true,
                   picture: true,
                   createdAt: true,
-                  description: true,
-                  members: {
-                    select: { id: true },
-                  },
+                  updatedAt: true,
+                  banner: true,
                 },
               },
               postedBy: { select: { id: true, name: true, picture: true } },
@@ -44,11 +44,17 @@ export const getPost = extendType({
               },
               comments: {
                 include: {
+                  post: { select: { id: true } },
                   user: { select: { id: true, name: true, picture: true } },
-                  votes: { select: { id: true, type: true, votedBy: true } },
+                  votes: {
+                    select: {
+                      id: true,
+                      type: true,
+                      votedBy: { select: { id: true } },
+                    },
+                  },
                 },
               },
-              bookmarkedBy: { select: { id: true } },
             },
           });
 
@@ -58,6 +64,7 @@ export const getPost = extendType({
 
           return post;
         } catch (error) {
+          console.log({ error });
           const errorMessage = error as Error;
           return { message: errorMessage?.message || "something went wrong!" };
         }
@@ -65,10 +72,3 @@ export const getPost = extendType({
     });
   },
 });
-
-// select: {
-//   id: true,
-//   createdAt: true,
-//   text: true,
-//   user: { select: { id: true, name: true, picture: true } },
-// },

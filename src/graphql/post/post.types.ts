@@ -56,7 +56,7 @@ export const IUserWithID = objectType({
 
 export const IPostCommunity = objectType({
   isTypeOf: (data) => {
-    const isTypeValid = "creator" in data ? true : false;
+    const isTypeValid = "banner" in data ? true : false;
 
     return isTypeValid;
   },
@@ -75,18 +75,6 @@ export const ICommonVote = objectType({
   },
 });
 
-export const IPostComment = objectType({
-  name: "IPostComment",
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.dateTime("createdAt");
-    t.nonNull.dateTime("updatedAt");
-    t.nonNull.string("text");
-    t.nonNull.field("user", { type: "IPostUser" });
-    t.list.nonNull.field("votes", { type: "ICommonVote" });
-  },
-});
-
 export const IPostType = objectType({
   name: "IPostType",
   isTypeOf: (data) => {
@@ -99,14 +87,14 @@ export const IPostType = objectType({
     t.nonNull.field("postedBy", { type: "IPostUser" });
     t.nonNull.field("community", { type: "IPostCommunity" });
     t.list.nonNull.field("votes", { type: "ICommonVote" });
-    t.list.field("comments", { type: "IPostComment" });
+    t.list.field("comments", { type: "Comment" });
     t.list.field("bookmarkedBy", { type: "IUserWithID" });
   },
 });
 
 // Get Post
 export const GetPostResponse = unionType({
-  name: "GetPostResponse",
+  name: "FetchPostResponse",
   definition: (t) => {
     t.members("IPostType", "PostError");
   },

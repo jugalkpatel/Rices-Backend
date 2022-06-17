@@ -98,27 +98,6 @@ export const FetchCommunityResponse = unionType({
   },
 });
 
-// // fetchCommunityWithPosts
-// export const fetchCommunityWithPostsResult = objectType({
-//   name: "FetchCommunityWithPostsResult",
-//   isTypeOf: (data) => {
-//     const isTypeValid = "posts" in data ? true : false;
-
-//     return isTypeValid;
-//   },
-//   definition: (t) => {
-//     t.nonNull.string("id");
-//     t.list.field("posts", { type: "IPostType" });
-//   },
-// });
-
-// export const FetchCommunityWithPostsResponse = unionType({
-//   name: "FetchCommunityWithPostsResponse",
-//   definition: (t) => {
-//     t.members("FetchCommunityWithPostsResult", "CommunityError");
-//   },
-// });
-
 // Join Community Types
 export const JoinCommunityResponse = unionType({
   name: "JoinCommunityResponse",

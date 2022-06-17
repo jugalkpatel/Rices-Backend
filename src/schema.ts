@@ -20,6 +20,7 @@ const permissions = shield(
       JoinCommunity: isAuthenticated,
       leaveCommunity: isAuthenticated,
       createPost: isAuthenticated,
+      createComment: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }
