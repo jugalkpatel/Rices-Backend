@@ -1,19 +1,13 @@
 import { objectType, unionType } from "nexus";
 
-export const UserError = objectType({
-  name: "UserError",
+import { Context } from "types";
+
+export const User = objectType({
   isTypeOf: (data) => {
-    const isTypeValid = "message" in data ? true : false;
+    const isTypeValid = "email" in data ? true : false;
 
     return isTypeValid;
   },
-  definition: (t) => {
-    t.implements("CommonError");
-  },
-});
-
-// base user type
-export const User = objectType({
   name: "User",
   definition: (t) => {
     t.nonNull.string("id");
@@ -21,27 +15,84 @@ export const User = objectType({
     t.nonNull.string("email");
     t.nonNull.string("picture");
     t.nonNull.int("tokenVersion");
-    t.nonNull.field("password", { type: "Password" });
     t.nonNull.dateTime("createdAt");
-    t.nonNull.dateTime("updatedAt");
-    t.list.field("joinedCommunities", { type: "Community" });
-    t.list.field("communitiesCreated", { type: "Community" });
-    t.list.field("posts", { type: "Post" });
-    t.list.field("votes", { type: "Vote" });
-    t.list.field("commentedOn", { type: "Comment" });
+    t.field("password", {
+      type: "Password",
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.user
+          .findUnique({
+            where: { id: parent.id },
+          })
+          .password();
+      },
+    });
+    t.list.nonNull.field("communitiesCreated", {
+      type: "Community",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .communitiesCreated();
+      },
+    });
+    t.list.nonNull.field("joinedCommunities", {
+      type: "Community",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .joinedCommunities();
+      },
+    });
+    t.list.field("posts", {
+      type: "Post",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .posts();
+      },
+    });
+    t.list.field("bookmarks", {
+      type: "Post",
+      resolve: (parent, args, context: Context, infor) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .bookmarks();
+      },
+    });
+    t.list.field("commentedOn", {
+      type: "Comment",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .commentedOn();
+      },
+    });
+    t.list.field("votes", {
+      type: "Vote",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .votes();
+      },
+    });
+    t.nonNull.list.field("commentVotes", {
+      type: "CommentVote",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.user
+          .findUnique({ where: { id: parent.id } })
+          .commentVotes();
+      },
+    });
   },
 });
 
-// export const User = objectType({
-//   name: "User",
-//   definition: (t) => {
-//     t.nonNull.string("id");
-//     t.nonNull.string("name");
-//     t.nonNull.string("email");
-//     t.nonNull.string("picture");
-//   },
-// });
+export const UserResponse = unionType({
+  name: "UserResponse",
+  definition: (t) => {
+    t.members("User", "CommonError");
+  },
+});
 
+// old
 export const IUser = objectType({
   name: "IUser",
   definition: (t) => {
@@ -84,6 +135,6 @@ export const IUserCommunities = objectType({
 export const GetUserCommunitiesResponse = unionType({
   name: "GetUserCommunitiesResponse",
   definition: (t) => {
-    t.members("IUserCommunites", "UserError");
+    t.members("IUserCommunites", "CommonError");
   },
 });

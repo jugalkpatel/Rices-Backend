@@ -1,4 +1,5 @@
 import { objectType } from "nexus";
+import { Context } from "types";
 
 export const Password = objectType({
   name: "Password",
@@ -10,6 +11,13 @@ export const Password = objectType({
   definition: (t) => {
     t.nonNull.string("id");
     t.nonNull.string("password");
-    t.nonNull.field("user", { type: "User" });
+    t.field("user", {
+      type: "User",
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.password
+          .findUnique({ where: { id: parent.id } })
+          .user();
+      },
+    });
   },
 });

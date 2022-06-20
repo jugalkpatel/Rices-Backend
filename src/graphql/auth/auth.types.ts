@@ -1,17 +1,25 @@
 import { objectType, unionType } from "nexus";
 
-export const AuthError = objectType({
-  name: "AuthError",
+export const IRefresh = objectType({
+  name: "IRefresh",
   isTypeOf: (data) => {
-    const isTypeValid = "message" in data ? true : false;
+    const isTypeValid = "success" in data ? true : false;
 
     return isTypeValid;
   },
   definition: (t) => {
-    t.implements("CommonError");
+    t.nonNull.field("success", { type: "Boolean" });
   },
 });
 
+export const RefreshResponse = unionType({
+  name: "RefreshResponse",
+  definition(t) {
+    t.members("IRefresh", "CommonError");
+  },
+});
+
+// old
 export const AuthUser = objectType({
   name: "AuthUser",
   definition: (t) => {
@@ -38,25 +46,6 @@ export const AuthPayload = objectType({
 export const AuthResponse = unionType({
   name: "AuthResponse",
   definition: (t) => {
-    t.members("AuthPayload", "AuthError");
-  },
-});
-
-export const IRefresh = objectType({
-  name: "IRefresh",
-  isTypeOf: (data) => {
-    const isTypeValid = "success" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    t.nonNull.field("success", { type: "Boolean" });
-  },
-});
-
-export const RefreshResponse = unionType({
-  name: "RefreshResponse",
-  definition(t) {
-    t.members("IRefresh", "AuthError");
+    t.members("AuthPayload", "CommonError");
   },
 });

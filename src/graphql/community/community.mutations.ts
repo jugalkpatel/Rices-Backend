@@ -6,26 +6,26 @@ import { getBannerImg, getCommunityImg } from "../../utils";
 export const CreateCommunity = extendType({
   type: "Mutation",
   definition: (t) => {
-    t.nonNull.field("CreateCommunity", {
+    t.nonNull.field("createCommunity", {
       type: "CommunityResponse",
       args: {
         name: nonNull(stringArg()),
         description: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, context: Context) => {
+      resolve: async (parent, args, context: Context, info) => {
         try {
-          const { userId, prisma } = context;
           const { name, description } = args;
+          const { prisma, userId } = context;
 
           const isNameAlreadyUsed = await prisma.community.findUnique({
             where: { title: name },
           });
 
-          if (isNameAlreadyUsed?.id) {
-            return { message: "name is already used" };
+          if (isNameAlreadyUsed) {
+            return { message: "community name not available." };
           }
 
-          const communityImg = getCommunityImg();
+          const picture = getCommunityImg();
 
           const banner = getBannerImg();
 
@@ -34,21 +34,17 @@ export const CreateCommunity = extendType({
               title: name,
               description,
               banner,
-              picture: communityImg,
+              picture,
               creator: { connect: { id: userId } },
               members: { connect: [{ id: userId }] },
             },
-            select: {
-              id: true,
-              title: true,
-            },
           });
 
-          if (!community?.id || !community?.title) {
+          if (!community?.id) {
             return { message: "error occurred while creating community" };
           }
 
-          return { id: community.id, title: community.title };
+          return community;
         } catch (error) {
           return {
             message: "unexpected error occurred while creating community",
@@ -57,12 +53,12 @@ export const CreateCommunity = extendType({
       },
     });
 
-    t.nonNull.field("JoinCommunity", {
-      type: "JoinCommunityResponse",
+    t.nonNull.field("joinCommunity", {
+      type: "CommunityResponse",
       args: {
         communityId: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, context: Context) => {
+      resolve: async (parent, args, context: Context) => {
         try {
           const { userId, prisma } = context;
           const { communityId } = args;
@@ -86,29 +82,22 @@ export const CreateCommunity = extendType({
             return { message: "user is already in the community" };
           }
 
-          await prisma.community.update({
-            where: {
-              id: communityId,
-            },
-            data: {
-              members: {
-                connect: [{ id: userId }],
-              },
-            },
-            select: { members: { select: { id: true } } },
+          const updatedCommunity = await prisma.community.update({
+            where: { id: communityId },
+            data: { members: { connect: [{ id: userId }] } },
           });
 
-          return { id: userId };
+          return updatedCommunity;
         } catch (error) {
           return {
-            message: "something went wrong!",
+            message: "unexpected error occurred while joining community.",
           };
         }
       },
     });
 
     t.nonNull.field("leaveCommunity", {
-      type: "JoinCommunityResponse",
+      type: "CommunityResponse",
       args: {
         communityId: nonNull(stringArg()),
       },
@@ -117,39 +106,38 @@ export const CreateCommunity = extendType({
           const { userId, prisma } = context;
           const { communityId } = args;
 
-          console.log({ userId, communityId });
-
           if (!userId || !communityId) {
             return { message: "error while parsing input values" };
           }
 
-          const community = await prisma.community.findUnique({
-            where: { id: communityId },
-            include: {
-              members: { select: { id: true } },
+          const community = await prisma.community.findFirst({
+            where: {
+              AND: [
+                {
+                  id: communityId,
+                },
+                {
+                  members: { some: { id: { contains: userId } } },
+                },
+              ],
             },
           });
 
-          const isUserAlreadyInCommunity = community?.members.find(
-            ({ id }) => id === userId
-          );
+          console.log({ community });
 
-          if (!isUserAlreadyInCommunity) {
+          if (!community?.id) {
             return { message: "User is not a part of the community." };
           }
 
-          await prisma.community.update({
+          const updatedCommunity = await prisma.community.update({
             where: { id: communityId },
-            data: {
-              members: { disconnect: [{ id: userId }] },
-            },
-            select: { members: { select: { id: true } } },
+            data: { members: { disconnect: [{ id: userId }] } },
           });
 
-          return { id: userId };
+          return updatedCommunity;
         } catch (error) {
           return {
-            message: "something went wrong!",
+            message: "unexpected error occurred while leaving community",
           };
         }
       },

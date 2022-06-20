@@ -1,14 +1,5 @@
 import { interfaceType, objectType, unionType } from "nexus";
-
-export const IPost = interfaceType({
-  name: "IPost",
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("content");
-    t.nonNull.dateTime("createdAt");
-  },
-});
+import { Context } from "types";
 
 export const Post = objectType({
   name: "Post",
@@ -18,23 +9,68 @@ export const Post = objectType({
     return isTypeValid;
   },
   definition: (t) => {
-    t.implements("IPost");
-    t.nonNull.field("postedBy", { type: "User" });
-    t.nonNull.field("community", { type: "Community" });
-    t.list.field("votes", { type: "Vote" });
-    t.list.field("comments", { type: "Comment" });
+    t.nonNull.string("id");
+    t.nonNull.string("title");
+    t.nonNull.string("content");
+    t.nonNull.dateTime("createdAt");
+    t.field("community", {
+      type: "Community",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.post
+          .findUnique({ where: { id: parent.id } })
+          .community();
+      },
+    });
+    t.field("postedBy", {
+      type: "User",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.post
+          .findUnique({ where: { id: parent.id } })
+          .postedBy();
+      },
+    });
+    t.list.field("bookmarkedBy", {
+      type: "User",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.post
+          .findUnique({ where: { id: parent.id } })
+          .bookmarkedBy();
+      },
+    });
+    t.list.field("comments", {
+      type: "Comment",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.post
+          .findUnique({ where: { id: parent.id } })
+          .comments();
+      },
+    });
+    t.nonNull.list.field("votes", {
+      type: "Vote",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.post
+          .findUnique({ where: { id: parent.id } })
+          .votes();
+      },
+    });
   },
 });
 
-export const PostError = objectType({
-  name: "PostError",
-  isTypeOf: (data) => {
-    const isTypeValid = "message" in data ? true : false;
-
-    return isTypeValid;
-  },
+export const PostResponse = unionType({
+  name: "PostResponse",
   definition: (t) => {
-    t.implements("CommonError");
+    t.members("Post", "CommonError");
+  },
+});
+
+// old
+export const IPost = interfaceType({
+  name: "IPost",
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("title");
+    t.nonNull.string("content");
+    t.nonNull.dateTime("createdAt");
   },
 });
 
@@ -87,7 +123,7 @@ export const IPostType = objectType({
     t.nonNull.field("postedBy", { type: "IPostUser" });
     t.nonNull.field("community", { type: "IPostCommunity" });
     t.list.nonNull.field("votes", { type: "ICommonVote" });
-    t.list.field("comments", { type: "Comment" });
+    t.list.field("comments", { type: "IComment" });
     t.list.field("bookmarkedBy", { type: "IUserWithID" });
   },
 });
@@ -96,7 +132,7 @@ export const IPostType = objectType({
 export const GetPostResponse = unionType({
   name: "FetchPostResponse",
   definition: (t) => {
-    t.members("IPostType", "PostError");
+    t.members("IPostType", "CommonError");
   },
 });
 
@@ -118,6 +154,6 @@ export const CreatePostResult = objectType({
 export const CreatePostResponse = unionType({
   name: "CreatePostResponse",
   definition: (t) => {
-    t.members("CreatePostResult", "PostError");
+    t.members("CreatePostResult", "CommonError");
   },
 });

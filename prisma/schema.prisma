@@ -19,7 +19,6 @@ model User {
   tokenVersion       Int           @default(1)
   password           Password?
   createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
   joinedCommunities  Community[]   @relation("PartOf")
   communitiesCreated Community[]
   posts              Post[]        @relation("posted by")
@@ -46,7 +45,6 @@ model Community {
   creatorId   String
   members     User[]   @relation("PartOf")
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   posts       Post[]   @relation("postedIn")
 }
 
@@ -73,7 +71,6 @@ model Vote {
   id        String   @id @default(uuid())
   type      Type     @default(UPVOTE)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   votedBy   User     @relation(fields: [userId], references: [id], name: "voted by")
   userId    String
   post      Post     @relation(fields: [postId], references: [id])
@@ -83,7 +80,6 @@ model Vote {
 model Comment {
   id        String        @id @default(uuid())
   createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
   text      String
   user      User          @relation(fields: [userId], references: [id])
   userId    String
@@ -98,7 +94,6 @@ model CommentVote {
   comment   Comment  @relation(fields: [commentId], references: [id])
   votedBy   User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   userId    String
   commentId String
 }

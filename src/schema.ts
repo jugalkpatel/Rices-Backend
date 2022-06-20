@@ -14,13 +14,16 @@ const permissions = shield(
       getUserCommunities: isAuthenticated,
     },
     Mutation: {
-      CreateCommunity: isAuthenticated,
       authenticate: isAuthenticated,
       refresh: isRefreshTokenValid,
-      JoinCommunity: isAuthenticated,
-      leaveCommunity: isAuthenticated,
       createPost: isAuthenticated,
       createComment: isAuthenticated,
+      // new
+      createCommunity: isAuthenticated,
+      joinCommunity: isAuthenticated,
+      leaveCommunity: isAuthenticated,
+      createBookmark: isAuthenticated,
+      removeBookmark: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }

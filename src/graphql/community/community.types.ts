@@ -1,5 +1,61 @@
 import { interfaceType, objectType, unionType } from "nexus";
+import { Context } from "types";
 
+export const community = objectType({
+  name: "Community",
+  isTypeOf: (data) => {
+    const isTypeValid = "description" in data ? true : false;
+
+    return isTypeValid;
+  },
+  definition: (t) => {
+    t.nonNull.string("id");
+    t.nonNull.string("title");
+    t.nonNull.string("banner");
+    t.nonNull.string("description");
+    t.nonNull.string("picture");
+    t.nonNull.dateTime("createdAt");
+    t.field("creator", {
+      type: "User",
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.community
+          .findUnique({
+            where: { id: parent.id },
+          })
+          .creator();
+      },
+    });
+    t.nonNull.list.field("members", {
+      type: "User",
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.community
+          .findUnique({
+            where: { id: parent.id },
+          })
+          .members();
+      },
+    });
+    t.list.field("posts", {
+      type: "Post",
+      resolve: (parent, args, context: Context, info) => {
+        return context.prisma.community
+          .findUnique({
+            where: { id: parent.id },
+          })
+          .posts();
+      },
+    });
+  },
+});
+
+export const CommunityResponse = unionType({
+  name: "CommunityResponse",
+  definition: (t) => {
+    t.members("Community", "CommonError");
+  },
+});
+
+// old
 export const ICommunity = interfaceType({
   name: "ICommunity",
   definition: (t) => {
@@ -10,22 +66,6 @@ export const ICommunity = interfaceType({
     t.nonNull.string("description");
     t.nonNull.dateTime("updatedAt");
     t.nonNull.string("picture");
-  },
-});
-
-// base community type
-export const Community = objectType({
-  name: "Community",
-  isTypeOf: (data) => {
-    const isTypeValid = "creator" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    t.implements("ICommunity");
-    t.nonNull.field("creator", { type: "User" });
-    t.list.nonNull.field("members", { type: "User" });
-    t.list.field("posts", { type: "Post" });
   },
 });
 
@@ -42,22 +82,10 @@ export const CommunityResult = objectType({
   },
 });
 
-export const CommunityError = objectType({
-  name: "CommunityError",
-  isTypeOf: (data) => {
-    const isTypeValid = "message" in data ? true : false;
-
-    return isTypeValid;
-  },
+export const ICommunityResponse = unionType({
+  name: "ICommunityResponse",
   definition: (t) => {
-    t.implements("CommonError");
-  },
-});
-
-export const CommunityResponse = unionType({
-  name: "CommunityResponse",
-  definition: (t) => {
-    t.members("CommunityResult", "CommunityError");
+    t.members("CommunityResult", "CommonError");
   },
 });
 
@@ -94,7 +122,7 @@ export const FetchCommunityResult = objectType({
 export const FetchCommunityResponse = unionType({
   name: "FetchCommunityResponse",
   definition: (t) => {
-    t.members("FetchCommunityResult", "CommunityError");
+    t.members("FetchCommunityResult", "CommonError");
   },
 });
 
@@ -102,7 +130,7 @@ export const FetchCommunityResponse = unionType({
 export const JoinCommunityResponse = unionType({
   name: "JoinCommunityResponse",
   definition: (t) => {
-    t.members("IJoinCommunityMember", "CommunityError");
+    t.members("IJoinCommunityMember", "CommonError");
   },
 });
 
@@ -145,6 +173,6 @@ export const AllCommunities = objectType({
 export const AllCommunitiesResponse = unionType({
   name: "AllCommunitiesResponse",
   definition(t) {
-    t.members("AllCommunities", "CommunityError");
+    t.members("AllCommunities", "CommonError");
   },
 });
