@@ -135,25 +135,3 @@ export const GetPostResponse = unionType({
     t.members("IPostType", "CommonError");
   },
 });
-
-// Create Post
-export const CreatePostResult = objectType({
-  name: "CreatePostResult",
-  isTypeOf: (data) => {
-    const isTypeValid = "id" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("title");
-    t.nonNull.string("community");
-  },
-});
-
-export const CreatePostResponse = unionType({
-  name: "CreatePostResponse",
-  definition: (t) => {
-    t.members("CreatePostResult", "CommonError");
-  },
-});

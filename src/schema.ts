@@ -10,8 +10,7 @@ import { isAuthenticated, isRefreshTokenValid } from "./middlewares";
 const permissions = shield(
   {
     Query: {
-      user: isAuthenticated,
-      getUserCommunities: isAuthenticated,
+      fetchUser: isAuthenticated,
     },
     Mutation: {
       authenticate: isAuthenticated,

@@ -33,27 +33,27 @@ export const allCommunities = extendType({
       },
     });
 
-    t.nonNull.field("allCommunities", {
-      type: "AllCommunitiesResponse",
-      resolve: async (parent, args, context: Context, info) => {
-        try {
-          const communityList = await context.prisma.community.findMany({
-            select: { id: true, title: true },
-          });
+    // t.nonNull.field("allCommunities", {
+    //   type: "AllCommunitiesResponse",
+    //   resolve: async (parent, args, context: Context, info) => {
+    //     try {
+    //       const communityList = await context.prisma.community.findMany({
+    //         select: { id: true, title: true },
+    //       });
 
-          if (!communityList || !communityList.length) {
-            return { message: "there are no communities created!" };
-          }
+    //       if (!communityList || !communityList.length) {
+    //         return { message: "there are no communities created!" };
+    //       }
 
-          return {
-            communities: communityList,
-          };
-        } catch (_) {
-          return {
-            message: "something went wrong!",
-          };
-        }
-      },
-    });
+    //       return {
+    //         communities: communityList,
+    //       };
+    //     } catch (_) {
+    //       return {
+    //         message: "something went wrong!",
+    //       };
+    //     }
+    //   },
+    // });
   },
 });

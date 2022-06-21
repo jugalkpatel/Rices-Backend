@@ -73,14 +73,6 @@ type CommunityUser {
 
 union CreateCommentResponse = CommonError | IComment
 
-union CreatePostResponse = CommonError | CreatePostResult
-
-type CreatePostResult {
-  community: String!
-  id: String!
-  title: String!
-}
-
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -219,9 +211,8 @@ type Mutation {
   createBookmark(postId: String!): UserResponse!
   createComment(postId: String!, text: String!): CommentResponse!
   createCommunity(description: String!, name: String!): CommunityResponse!
-  createPost(community: String!, content: String!, title: String!): CreatePostResponse!
+  createPost(community: String!, content: String!, title: String!): PostResponse!
   createUser(email: String!, name: String!, password: String!): UserResponse!
-  createUserPost(community: String!, content: String!, title: String!): PostResponse!
   joinCommunity(communityId: String!): CommunityResponse!
   leaveCommunity(communityId: String!): CommunityResponse!
   login(email: String!, password: String!): UserResponse!
@@ -255,14 +246,10 @@ type PostWithId {
 }
 
 type Query {
-  allCommunities: AllCommunitiesResponse!
   authenticate: AuthResponse!
   fetchCommunity(name: String!): CommunityResponse!
-  fetchPost(postId: String!): FetchPostResponse!
-  fetchPostComments(postId: String!): FetchPostCommentsResponse!
-  getPostDetails(postId: String!): PostResponse!
-  getUserCommunities: GetUserCommunitiesResponse!
-  user(email: String!): IUserQueryResult!
+  fetchPost(postId: String!): PostResponse!
+  fetchUser: UserResponse!
 }
 
 union RefreshResponse = CommonError | IRefresh

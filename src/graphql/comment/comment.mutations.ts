@@ -1,4 +1,5 @@
 import { extendType, nonNull, stringArg } from "nexus";
+
 import { Context } from "types";
 
 export const CommentMutations = extendType({
@@ -26,7 +27,7 @@ export const CommentMutations = extendType({
               text,
               post: { connect: { id: postId } },
               user: { connect: { id: userId } },
-              // votes: { create: { votedBy: { connect: { id: userId } } } },
+              votes: { create: { votedBy: { connect: { id: userId } } } },
             },
           });
 
