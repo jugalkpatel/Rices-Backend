@@ -37,6 +37,7 @@ export const CommentMutations = extendType({
 
           return comment;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error while creating community!" };
         }
       },

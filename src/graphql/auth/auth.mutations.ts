@@ -129,6 +129,7 @@ export const AuthMutation = extendType({
 
           return user;
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error occurred while authenticating user",
           };
@@ -139,29 +140,34 @@ export const AuthMutation = extendType({
     t.nonNull.field("refresh", {
       type: "RefreshResponse",
       resolve: async (_root, _args, ctx: Context) => {
-        const { prisma, response, userId, tokenVersion } = ctx;
+        try {
+          const { prisma, response, userId, tokenVersion } = ctx;
 
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-        });
+          const user = await prisma.user.findUnique({
+            where: { id: userId },
+          });
 
-        if (!user || userId !== user?.id) {
-          clearTokens(response);
-          return { message: "user not found!" };
+          if (!user || userId !== user?.id) {
+            clearTokens(response);
+            return { message: "user not found!" };
+          }
+
+          if (
+            !tokenVersion ||
+            !user?.tokenVersion ||
+            !checkTokenVersion(tokenVersion, user.tokenVersion)
+          ) {
+            clearTokens(response);
+            return { message: "invalid token!" };
+          }
+
+          setCookies(response, user.id, user.tokenVersion);
+
+          return { success: true };
+        } catch (error) {
+          console.log({ error });
+          return { message: "unexpected error while refreshing token" };
         }
-
-        if (
-          !tokenVersion ||
-          !user?.tokenVersion ||
-          !checkTokenVersion(tokenVersion, user.tokenVersion)
-        ) {
-          clearTokens(response);
-          return { message: "invalid token!" };
-        }
-
-        setCookies(response, user.id, user.tokenVersion);
-
-        return { success: true };
       },
     });
   },

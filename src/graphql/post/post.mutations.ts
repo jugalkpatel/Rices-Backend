@@ -35,6 +35,7 @@ export const CreatePost = extendType({
 
           return post;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error occurred while creating post" };
         }
       },

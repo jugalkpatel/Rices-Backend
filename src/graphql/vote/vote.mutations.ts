@@ -64,6 +64,7 @@ export const voteMutations = extendType({
 
           return newVote;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error occurred while voting the post" };
         }
       },
@@ -101,6 +102,7 @@ export const voteMutations = extendType({
 
           return deleteVote;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error while removing vote" };
         }
       },

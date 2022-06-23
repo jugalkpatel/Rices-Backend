@@ -46,6 +46,7 @@ export const CreateCommunity = extendType({
 
           return community;
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error occurred while creating community",
           };
@@ -89,6 +90,7 @@ export const CreateCommunity = extendType({
 
           return updatedCommunity;
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error occurred while joining community.",
           };
@@ -136,6 +138,7 @@ export const CreateCommunity = extendType({
 
           return updatedCommunity;
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error occurred while leaving community",
           };

@@ -52,6 +52,7 @@ export const userMutations = extendType({
 
           return user;
         } catch (error) {
+          console.log({ error });
           return {
             message: "something went wrong!",
           };
@@ -92,6 +93,7 @@ export const userMutations = extendType({
 
           return updatedUserWithBookmarks;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error while creating bookmark" };
         }
       },
@@ -130,6 +132,7 @@ export const userMutations = extendType({
 
           return updatedUserWithBookmarks;
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error while removing post from bookmarks",
           };
