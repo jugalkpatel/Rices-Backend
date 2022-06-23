@@ -71,9 +71,9 @@ model Vote {
   id        String   @id @default(uuid())
   type      Type     @default(UPVOTE)
   createdAt DateTime @default(now())
-  votedBy   User     @relation(fields: [userId], references: [id], name: "voted by")
+  voteUser  User     @relation(fields: [userId], references: [id], name: "voted by", onDelete: Cascade)
   userId    String
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
 }
 

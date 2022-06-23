@@ -21,3 +21,13 @@ export type ICookie = {
   access: string;
   refresh: string;
 };
+
+export type VoteParams = {
+  communityId: string;
+  postId: string;
+};
+
+export type EligibilityParams = {
+  data: VoteParams & { userId: string };
+  context: Context;
+};

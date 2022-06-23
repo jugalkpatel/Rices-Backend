@@ -1,11 +1,17 @@
 import { makeSchema } from "nexus";
-import { shield } from "graphql-shield";
+import { shield, chain } from "graphql-shield";
 import { applyMiddleware } from "graphql-middleware";
 import { join } from "path";
 import "dotenv/config";
 
 import * as types from "./graphql";
-import { isAuthenticated, isRefreshTokenValid } from "./middlewares";
+import {
+  isAuthenticated,
+  isRefreshTokenValid,
+  isUserEligibleForVote,
+  validateRemoveVote,
+  isUserEligibileForComment,
+} from "./middlewares";
 
 const permissions = shield(
   {
@@ -16,13 +22,14 @@ const permissions = shield(
       authenticate: isAuthenticated,
       refresh: isRefreshTokenValid,
       createPost: isAuthenticated,
-      createComment: isAuthenticated,
-      // new
+      createComment: chain(isAuthenticated, isUserEligibileForComment),
       createCommunity: isAuthenticated,
       joinCommunity: isAuthenticated,
       leaveCommunity: isAuthenticated,
       createBookmark: isAuthenticated,
       removeBookmark: isAuthenticated,
+      vote: chain(isAuthenticated, isUserEligibleForVote),
+      removeVote: chain(isAuthenticated, validateRemoveVote),
     },
   },
   { debug: true, allowExternalErrors: true }

@@ -1,1 +1,7 @@
-export { isAuthenticated, isRefreshTokenValid } from "./rules";
+export {
+  isAuthenticated,
+  isRefreshTokenValid,
+  isUserEligibleForVote,
+  validateRemoveVote,
+  isUserEligibileForComment,
+} from "./rules";

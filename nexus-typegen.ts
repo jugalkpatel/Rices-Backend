@@ -29,6 +29,11 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  VoteArgs: { // input type
+    communityId: string; // String!
+    postId: string; // String!
+    type: NexusGenEnums['VoteType']; // VoteType!
+  }
 }
 
 export interface NexusGenEnums {
@@ -222,6 +227,7 @@ export interface NexusGenUnions {
   PostResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['Post'];
   RefreshResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['IRefresh'];
   UserResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['User'];
+  VoteResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['Vote'];
 }
 
 export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects & NexusGenUnions
@@ -377,6 +383,8 @@ export interface NexusGenFieldTypes {
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['UserResponse']; // UserResponse!
     removeBookmark: NexusGenRootTypes['UserResponse']; // UserResponse!
+    removeVote: NexusGenRootTypes['VoteResponse']; // VoteResponse!
+    vote: NexusGenRootTypes['VoteResponse']; // VoteResponse!
   }
   Password: { // field return type
     id: string; // String!
@@ -424,7 +432,7 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     post: NexusGenRootTypes['Post'] | null; // Post
     type: NexusGenEnums['VoteType']; // VoteType!
-    votedBy: NexusGenRootTypes['User'] | null; // User
+    voteUser: NexusGenRootTypes['User'] | null; // User
   }
   ICommunity: { // field return type
     banner: string; // String!
@@ -592,6 +600,8 @@ export interface NexusGenFieldTypeNames {
     refresh: 'RefreshResponse'
     register: 'UserResponse'
     removeBookmark: 'UserResponse'
+    removeVote: 'VoteResponse'
+    vote: 'VoteResponse'
   }
   Password: { // field return type name
     id: 'String'
@@ -639,7 +649,7 @@ export interface NexusGenFieldTypeNames {
     id: 'String'
     post: 'Post'
     type: 'VoteType'
-    votedBy: 'User'
+    voteUser: 'User'
   }
   ICommunity: { // field return type name
     banner: 'String'
@@ -699,6 +709,14 @@ export interface NexusGenArgTypes {
     removeBookmark: { // args
       postId: string; // String!
     }
+    removeVote: { // args
+      communityId: string; // String!
+      postId: string; // String!
+      voteId: string; // String!
+    }
+    vote: { // args
+      data?: NexusGenInputs['VoteArgs'] | null; // VoteArgs
+    }
   }
   Query: {
     fetchCommunity: { // args
@@ -725,6 +743,7 @@ export interface NexusGenAbstractTypeMembers {
   PostResponse: "CommonError" | "Post"
   RefreshResponse: "CommonError" | "IRefresh"
   UserResponse: "CommonError" | "User"
+  VoteResponse: "CommonError" | "Vote"
   ICommunity: "FetchCommunityResult" | "IPostCommunity"
   IPost: "IPostType"
 }
@@ -737,7 +756,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = keyof NexusGenEnums;
 
@@ -747,7 +766,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "Comment" | "CommonError" | "Community" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "User";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "Comment" | "CommonError" | "Community" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "User" | "Vote";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

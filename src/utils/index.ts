@@ -9,3 +9,4 @@ export {
 export { setCookies, CookieNames, clearTokens } from "./cookie-utils";
 export { TokenError } from "./errors";
 export { getProfileImg, getCommunityImg, getBannerImg } from "./imgs";
+export { default as checkUserEligibility } from "./checkUserEligibility";

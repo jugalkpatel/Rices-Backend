@@ -219,6 +219,8 @@ type Mutation {
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): UserResponse!
   removeBookmark(postId: String!): UserResponse!
+  removeVote(communityId: String!, postId: String!, voteId: String!): VoteResponse!
+  vote(data: VoteArgs): VoteResponse!
 }
 
 type Password {
@@ -278,8 +280,16 @@ type Vote {
   id: String!
   post: Post
   type: VoteType!
-  votedBy: User
+  voteUser: User
 }
+
+input VoteArgs {
+  communityId: String!
+  postId: String!
+  type: VoteType!
+}
+
+union VoteResponse = CommonError | Vote
 
 enum VoteType {
   DOWNVOTE
