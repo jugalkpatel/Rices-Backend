@@ -92,6 +92,28 @@ export const UserResponse = unionType({
   },
 });
 
+// export const UserPosts = objectType({
+//   name: "UserPosts",
+//   isTypeOf: (data) => {
+//     const isTypeValid = "cursorId" in data ? true : false;
+
+//     return isTypeValid;
+//   },
+//   definition: (t) => {
+//     t.nonNull.string("cursorId");
+//     t.list.field("posts", {
+//       type: "Post",
+//     });
+//   },
+// });
+
+// export const UserPostsResponse = unionType({
+//   name: "UserPostsResponse",
+//   definition: (t) => {
+//     t.members("UserPosts", "CommonError");
+//   },
+// });
+
 // old
 export const IUser = objectType({
   name: "IUser",

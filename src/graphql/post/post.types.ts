@@ -63,6 +63,28 @@ export const PostResponse = unionType({
   },
 });
 
+export const BatchPosts = objectType({
+  name: "BatchPosts",
+  isTypeOf: (data) => {
+    const isTypeValid = "cursorId" in data ? true : false;
+
+    return isTypeValid;
+  },
+  definition: (t) => {
+    t.nonNull.string("cursorId");
+    t.list.field("posts", {
+      type: "Post",
+    });
+  },
+});
+
+export const BatchPostsResponse = unionType({
+  name: "BatchPostsResponse",
+  definition: (t) => {
+    t.members("BatchPosts", "CommonError");
+  },
+});
+
 // old
 export const IPost = interfaceType({
   name: "IPost",

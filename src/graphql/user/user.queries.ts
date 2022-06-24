@@ -20,6 +20,10 @@ export const UserQuery = extendType({
             where: { id: userId },
           });
 
+          const posts = await prisma.post.findMany({
+            where: { community: { members: { every: { id: userId } } } },
+          });
+
           console.log({ user });
 
           if (!user || !user?.id) {
