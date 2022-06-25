@@ -109,14 +109,28 @@ export const postQueries = extendType({
 
           console.log({ cursorId });
 
+          const allPosts = await prisma.post.findMany({
+            orderBy: {
+              title: "asc",
+            },
+          });
+
+          const lastPost = allPosts[allPosts.length - 1];
+
           if (cursorId) {
             posts = await prisma.post.findMany({
+              orderBy: {
+                title: "asc",
+              },
               take,
               skip,
               cursor: { id: cursorId },
             });
           } else {
             posts = await prisma.post.findMany({
+              orderBy: {
+                title: "asc",
+              },
               skip,
               take,
             });
@@ -127,6 +141,10 @@ export const postQueries = extendType({
           }
 
           const newCursorId = posts[posts.length - 1].id;
+
+          if (newCursorId === lastPost.id) {
+            return { posts, cursorId: "" };
+          }
 
           return { posts, cursorId: newCursorId };
         } catch (error) {
