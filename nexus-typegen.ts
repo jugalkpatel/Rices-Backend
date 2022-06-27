@@ -37,6 +37,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  FilterType: "NEW" | "TOP"
   VoteType: "DOWNVOTE" | "UPVOTE"
 }
 
@@ -221,6 +222,7 @@ export interface NexusGenUnions {
   AuthResponse: NexusGenRootTypes['AuthPayload'] | NexusGenRootTypes['CommonError'];
   BatchPostsResponse: NexusGenRootTypes['BatchPosts'] | NexusGenRootTypes['CommonError'];
   CommentResponse: NexusGenRootTypes['Comment'] | NexusGenRootTypes['CommonError'];
+  CommentVoteResponse: NexusGenRootTypes['CommentVote'] | NexusGenRootTypes['CommonError'];
   CommunityResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['Community'];
   CreateCommentResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['IComment'];
   FetchCommunityResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['FetchCommunityResult'];
@@ -392,8 +394,10 @@ export interface NexusGenFieldTypes {
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['UserResponse']; // UserResponse!
     removeBookmark: NexusGenRootTypes['UserResponse']; // UserResponse!
+    removeCommentVote: NexusGenRootTypes['CommentVoteResponse']; // CommentVoteResponse!
     removeVote: NexusGenRootTypes['VoteResponse']; // VoteResponse!
     vote: NexusGenRootTypes['VoteResponse']; // VoteResponse!
+    voteComment: NexusGenRootTypes['CommentVoteResponse']; // CommentVoteResponse!
   }
   Password: { // field return type
     id: string; // String!
@@ -416,7 +420,8 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
-    fetchAllPosts: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
+    fetchAllPostsByTime: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
+    fetchAllPostsByVotes: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
     fetchAllUserPosts: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
     fetchCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     fetchPost: NexusGenRootTypes['PostResponse']; // PostResponse!
@@ -615,8 +620,10 @@ export interface NexusGenFieldTypeNames {
     refresh: 'RefreshResponse'
     register: 'UserResponse'
     removeBookmark: 'UserResponse'
+    removeCommentVote: 'CommentVoteResponse'
     removeVote: 'VoteResponse'
     vote: 'VoteResponse'
+    voteComment: 'CommentVoteResponse'
   }
   Password: { // field return type name
     id: 'String'
@@ -639,7 +646,8 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     authenticate: 'AuthResponse'
-    fetchAllPosts: 'BatchPostsResponse'
+    fetchAllPostsByTime: 'BatchPostsResponse'
+    fetchAllPostsByVotes: 'BatchPostsResponse'
     fetchAllUserPosts: 'BatchPostsResponse'
     fetchCommunity: 'CommunityResponse'
     fetchPost: 'PostResponse'
@@ -726,6 +734,10 @@ export interface NexusGenArgTypes {
     removeBookmark: { // args
       postId: string; // String!
     }
+    removeCommentVote: { // args
+      commentId: string; // String!
+      voteId: string; // String!
+    }
     removeVote: { // args
       communityId: string; // String!
       postId: string; // String!
@@ -734,11 +746,19 @@ export interface NexusGenArgTypes {
     vote: { // args
       data?: NexusGenInputs['VoteArgs'] | null; // VoteArgs
     }
+    voteComment: { // args
+      commentId: string; // String!
+      type: NexusGenEnums['VoteType']; // VoteType!
+    }
   }
   Query: {
-    fetchAllPosts: { // args
+    fetchAllPostsByTime: { // args
       cursorId?: string | null; // String
       skip?: number | null; // Int
+      take: number; // Int!
+    }
+    fetchAllPostsByVotes: { // args
+      cursorId?: string | null; // String
       take: number; // Int!
     }
     fetchAllUserPosts: { // args
@@ -760,6 +780,7 @@ export interface NexusGenAbstractTypeMembers {
   AuthResponse: "AuthPayload" | "CommonError"
   BatchPostsResponse: "BatchPosts" | "CommonError"
   CommentResponse: "Comment" | "CommonError"
+  CommentVoteResponse: "CommentVote" | "CommonError"
   CommunityResponse: "CommonError" | "Community"
   CreateCommentResponse: "CommonError" | "IComment"
   FetchCommunityResponse: "CommonError" | "FetchCommunityResult"
@@ -794,7 +815,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "BatchPosts" | "Comment" | "CommonError" | "Community" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "User" | "Vote";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "BatchPosts" | "Comment" | "CommentVote" | "CommonError" | "Community" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "User" | "Vote";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

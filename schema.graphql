@@ -47,6 +47,8 @@ type CommentVote {
   votedBy: User
 }
 
+union CommentVoteResponse = CommentVote | CommonError
+
 type CommonError {
   message: String!
 }
@@ -108,6 +110,11 @@ type FetchPostCommentsResult {
 }
 
 union FetchPostResponse = CommonError | IPostType
+
+enum FilterType {
+  NEW
+  TOP
+}
 
 union GetUserCommunitiesResponse = CommonError | IUserCommunites
 
@@ -226,8 +233,10 @@ type Mutation {
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): UserResponse!
   removeBookmark(postId: String!): UserResponse!
+  removeCommentVote(commentId: String!, voteId: String!): CommentVoteResponse!
   removeVote(communityId: String!, postId: String!, voteId: String!): VoteResponse!
   vote(data: VoteArgs): VoteResponse!
+  voteComment(commentId: String!, type: VoteType!): CommentVoteResponse!
 }
 
 type Password {
@@ -256,7 +265,8 @@ type PostWithId {
 
 type Query {
   authenticate: AuthResponse!
-  fetchAllPosts(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
+  fetchAllPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
+  fetchAllPostsByVotes(cursorId: String, take: Int!): BatchPostsResponse!
   fetchAllUserPosts(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
   fetchCommunity(name: String!): CommunityResponse!
   fetchPost(postId: String!): PostResponse!

@@ -42,12 +42,12 @@ export const voteMutations = extendType({
             const newType: typeof type =
               exisingVote.type === "UPVOTE" ? "DOWNVOTE" : "UPVOTE";
 
-            const updateVote = await prisma.vote.update({
+            const updatedVote = await prisma.vote.update({
               where: { id: exisingVote.id },
               data: { type: newType },
             });
 
-            return updateVote;
+            return updatedVote;
           }
 
           const newVote = await prisma.vote.create({
@@ -89,18 +89,18 @@ export const voteMutations = extendType({
           });
 
           if (!vote || !vote.id) {
-            return { message: "vote does not exist." };
+            return { message: "vote does not exist" };
           }
 
-          const deleteVote = await prisma.vote.delete({
+          const deletedVote = await prisma.vote.delete({
             where: { id: voteId },
           });
 
-          if (!deleteVote || !deleteVote?.id) {
+          if (!deletedVote || !deletedVote?.id) {
             return { message: "error while deleting post" };
           }
 
-          return deleteVote;
+          return deletedVote;
         } catch (error) {
           console.log({ error });
           return { message: "unexpected error while removing vote" };

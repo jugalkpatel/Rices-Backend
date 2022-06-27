@@ -31,6 +31,8 @@ const permissions = shield(
       removeBookmark: isAuthenticated,
       vote: chain(isAuthenticated, isUserEligibleForVote),
       removeVote: chain(isAuthenticated, validateRemoveVote),
+      voteComment: isAuthenticated,
+      removeCommentVote: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }

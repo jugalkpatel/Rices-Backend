@@ -41,11 +41,11 @@ export const Comment = objectType({
 
 export const CommentVote = objectType({
   name: "CommentVote",
-  // isTypeOf: (data) => {
-  //   const isTypeValid = "comment" in data ? true : false;
+  isTypeOf: (data) => {
+    const isTypeValid = "type" in data ? true : false;
 
-  //   return isTypeValid;
-  // },
+    return isTypeValid;
+  },
   definition: (t) => {
     t.nonNull.string("id");
     t.nonNull.field("type", { type: "VoteType" });
@@ -75,6 +75,13 @@ export const CommentReponse = unionType({
   name: "CommentResponse",
   definition: (t) => {
     t.members("Comment", "CommonError");
+  },
+});
+
+export const CommentVoteResponse = unionType({
+  name: "CommentVoteResponse",
+  definition: (t) => {
+    t.members("CommentVote", "CommonError");
   },
 });
 

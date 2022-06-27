@@ -1,6 +1,7 @@
-import { extendType, inputObjectType, intArg, nonNull, stringArg } from "nexus";
+import { extendType, intArg, nonNull, stringArg } from "nexus";
 
 import { Context } from "types";
+import { filterPosts } from "../../utils";
 
 export const postQueries = extendType({
   type: "Query",
@@ -89,7 +90,7 @@ export const postQueries = extendType({
       },
     });
 
-    t.nonNull.field("fetchAllPosts", {
+    t.nonNull.field("fetchAllPostsByTime", {
       type: "BatchPostsResponse",
       args: {
         skip: intArg(),
@@ -107,20 +108,16 @@ export const postQueries = extendType({
             skip = 1;
           }
 
-          console.log({ cursorId });
-
           const allPosts = await prisma.post.findMany({
-            orderBy: {
-              title: "asc",
-            },
+            orderBy: { createdAt: "desc" },
           });
 
-          const lastPost = allPosts[allPosts.length - 1];
+          const lastPostId = allPosts[allPosts.length - 1].id;
 
           if (cursorId) {
             posts = await prisma.post.findMany({
               orderBy: {
-                title: "asc",
+                createdAt: "desc",
               },
               take,
               skip,
@@ -129,7 +126,7 @@ export const postQueries = extendType({
           } else {
             posts = await prisma.post.findMany({
               orderBy: {
-                title: "asc",
+                createdAt: "desc",
               },
               skip,
               take,
@@ -142,7 +139,7 @@ export const postQueries = extendType({
 
           const newCursorId = posts[posts.length - 1].id;
 
-          if (newCursorId === lastPost.id) {
+          if (newCursorId === lastPostId) {
             return { posts, cursorId: "" };
           }
 
@@ -151,6 +148,67 @@ export const postQueries = extendType({
           return {
             message: "unexpected error occurred while fetching all posts",
           };
+        }
+      },
+    });
+
+    t.nonNull.field("fetchAllPostsByVotes", {
+      type: "BatchPostsResponse",
+      args: {
+        take: nonNull(intArg()),
+        cursorId: stringArg(),
+      },
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const { prisma } = context;
+          const { take, cursorId } = args;
+
+          const allPosts = await prisma.post.findMany({
+            orderBy: { title: "asc" },
+            include: { votes: true },
+          });
+
+          const filteredPosts = filterPosts(allPosts);
+
+          const lastPostId = filteredPosts[filteredPosts.length - 1].id;
+
+          if (take > filteredPosts.length) {
+            return { posts: filteredPosts, cursorId: "" };
+          }
+
+          if (!cursorId) {
+            const posts = filteredPosts.slice(0, take);
+
+            const newCursorId = posts[posts.length - 1].id;
+
+            return { posts, cursorId: newCursorId };
+          }
+
+          const cursorIndex = filteredPosts.findIndex(
+            ({ id }) => id === cursorId
+          );
+
+          if (cursorIndex + 1 + take > filteredPosts.length) {
+            return {
+              posts: filteredPosts.slice(cursorIndex + 1),
+              cursorId: "",
+            };
+          }
+
+          const posts = filteredPosts.slice(
+            cursorIndex + 1,
+            cursorIndex + take + 1
+          );
+
+          const newCursorId = posts[posts.length - 1].id;
+
+          if (newCursorId === lastPostId) {
+            return { posts, cursorId: "" };
+          }
+
+          return { posts, cursorId: newCursorId };
+        } catch (error) {
+          return { message: "unexpected error while fetching posts." };
         }
       },
     });

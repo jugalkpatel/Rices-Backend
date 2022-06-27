@@ -1,4 +1,4 @@
-import { interfaceType, objectType, unionType } from "nexus";
+import { enumType, interfaceType, objectType, unionType } from "nexus";
 import { Context } from "types";
 
 export const Post = objectType({
@@ -76,6 +76,11 @@ export const BatchPosts = objectType({
       type: "Post",
     });
   },
+});
+
+export const FilterType = enumType({
+  name: "FilterType",
+  members: ["TOP", "NEW"],
 });
 
 export const BatchPostsResponse = unionType({
