@@ -1,12 +1,4 @@
-import { Vote, Type, Post } from "@prisma/client";
-import { NextFunction } from "express";
-// import { Vote } from "../graphql/vote/vote.types";
-// import { Post } from "../graphql/post/post.types";
-// import { NexusGenFieldTypes } from "../../nexus-typegen";
-
-// type Vote = Pick<NexusGenFieldTypes, "Vote">;
-
-// type Post = Pick<typeof Post, "">;
+import { Vote, Post } from "@prisma/client";
 
 type CustomPost = Post & {
   votes: Array<Vote>;
@@ -19,8 +11,6 @@ function voteCount(votes: Array<Partial<Vote>>) {
 
   return upvotes.length - downvotes.length;
 }
-
-// type Custom = Pick<Post, "Post">;
 
 function filterPosts(posts: Array<CustomPost>) {
   const newPosts = posts.sort((current, next) => {
@@ -42,24 +32,61 @@ function filterPosts(posts: Array<CustomPost>) {
   return newPosts;
 }
 
-export { voteCount, filterPosts };
+type FilterPostsByVoteParams = {
+  allPosts: Array<CustomPost>;
+  cursorId: string | null;
+  take: number;
+};
 
-// function topFilter(posts: Array<Post>): Array<Post> {
-//   //   const postsForSort = [...posts];
+function filterPostsByVote({
+  allPosts,
+  cursorId,
+  take,
+}: FilterPostsByVoteParams) {
+  const filteredPosts = filterPosts(allPosts);
 
-//   const postsForSort = posts.map(({ Post }) => {
-//     return Post;
-//   });
+  const lastPostId = filteredPosts[filteredPosts.length - 1].id;
 
-//   const filteredPosts = postsForSort.sort((current, next) => {
-//     if (voteCount(current.) > voteCount(next.votes)) {
-//       return -1;
-//     }
-//     if (voteCount(current.votes) < voteCount(next.votes)) {
-//       return 1;
-//     }
-//     return 0;
-//   });
+  console.log({ lastPostId });
 
-//   return filteredPosts;
-// }
+  if (take > filteredPosts.length) {
+    return { posts: filteredPosts, cursorId: "" };
+  }
+
+  if (!cursorId) {
+    const posts = filteredPosts.slice(0, take);
+
+    const newCursorId = posts[posts.length - 1].id;
+
+    posts.forEach(({ id }) => {
+      console.log({ id });
+    });
+
+    console.log({ newCursorId });
+
+    console.log("--------------------");
+
+    return { posts, cursorId: newCursorId };
+  }
+
+  const cursorIndex = filteredPosts.findIndex(({ id }) => id === cursorId);
+
+  if (cursorIndex + 1 + take > filteredPosts.length) {
+    return {
+      posts: filteredPosts.slice(cursorIndex + 1),
+      cursorId: "",
+    };
+  }
+
+  const posts = filteredPosts.slice(cursorIndex + 1, cursorIndex + take + 1);
+
+  const newCursorId = posts[posts.length - 1].id;
+
+  if (newCursorId === lastPostId) {
+    return { posts, cursorId: "" };
+  }
+
+  return { posts, cursorId: newCursorId };
+}
+
+export { voteCount, filterPosts, filterPostsByVote };

@@ -75,11 +75,16 @@ export const userMutations = extendType({
           }
 
           const alreadyBookmarked = await prisma.user.findFirst({
-            where: { bookmarks: { some: { id: { contains: postId } } } },
+            where: {
+              AND: [
+                { id: userId },
+                { bookmarks: { some: { id: { contains: postId } } } },
+              ],
+            },
           });
 
           if (alreadyBookmarked?.id) {
-            return { message: "post already bookmarked." };
+            return { message: "post already bookmarked" };
           }
 
           const updatedUserWithBookmarks = await prisma.user.update({
@@ -118,7 +123,7 @@ export const userMutations = extendType({
           });
 
           if (!checkBookmark?.id) {
-            return { message: "post is not bookmarked" };
+            return { message: "post is not in the bookmarks" };
           }
 
           const updatedUserWithBookmarks = await prisma.user.update({

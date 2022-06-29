@@ -17,7 +17,9 @@ const permissions = shield(
   {
     Query: {
       fetchUser: isAuthenticated,
-      fetchAllUserPosts: isAuthenticated,
+      fetchAllUserPostsByTime: isAuthenticated,
+      fetchAllUserPostsByVote: isAuthenticated,
+      fetchUserBookmarks: isAuthenticated,
     },
     Mutation: {
       authenticate: isAuthenticated,

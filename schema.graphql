@@ -267,10 +267,12 @@ type Query {
   authenticate: AuthResponse!
   fetchAllPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
   fetchAllPostsByVotes(cursorId: String, take: Int!): BatchPostsResponse!
-  fetchAllUserPosts(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
+  fetchAllUserPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
+  fetchAllUserPostsByVote(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
   fetchCommunity(name: String!): CommunityResponse!
   fetchPost(postId: String!): PostResponse!
   fetchUser: UserResponse!
+  fetchUserBookmarks(cursorId: String, take: Int!): BatchPostsResponse!
 }
 
 union RefreshResponse = CommonError | IRefresh

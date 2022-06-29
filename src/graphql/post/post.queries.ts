@@ -1,7 +1,7 @@
 import { extendType, intArg, nonNull, stringArg } from "nexus";
 
 import { Context } from "types";
-import { filterPosts } from "../../utils";
+import { filterPostsByVote } from "../../utils";
 
 export const postQueries = extendType({
   type: "Query",
@@ -35,7 +35,7 @@ export const postQueries = extendType({
       },
     });
 
-    t.nonNull.field("fetchAllUserPosts", {
+    t.nonNull.field("fetchAllUserPostsByTime", {
       type: "BatchPostsResponse",
       args: {
         skip: intArg(),
@@ -57,11 +57,9 @@ export const postQueries = extendType({
             return { message: "user not available" };
           }
 
-          console.log({ cursorId });
-
           if (cursorId) {
-            console.log("returning cursor based");
             posts = await prisma.post.findMany({
+              orderBy: { createdAt: "desc" },
               where: { community: { members: { some: { id: userId } } } },
               skip,
               take,
@@ -69,8 +67,10 @@ export const postQueries = extendType({
             });
           } else {
             posts = await prisma.post.findMany({
-              where: { community: { members: { some: { id: userId } } } },
-              skip,
+              orderBy: { createdAt: "desc" },
+              where: {
+                community: { members: { some: { id: { equals: userId } } } },
+              },
               take,
             });
           }
@@ -80,6 +80,40 @@ export const postQueries = extendType({
           }
 
           const newCursorId = posts[posts.length - 1].id;
+
+          return { posts, cursorId: newCursorId };
+        } catch (error) {
+          console.log({ error });
+          return {
+            message: "unexpected error occurred while fetching all user posts",
+          };
+        }
+      },
+    });
+
+    t.nonNull.field("fetchAllUserPostsByVote", {
+      type: "BatchPostsResponse",
+      args: {
+        skip: intArg(),
+        take: nonNull(intArg()),
+        cursorId: stringArg(),
+      },
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const { prisma, userId } = context;
+          const { take, cursorId } = args;
+
+          const allPosts = await prisma.post.findMany({
+            orderBy: { createdAt: "desc" },
+            where: { community: { members: { some: { id: userId } } } },
+            include: { votes: true },
+          });
+
+          const { posts, cursorId: newCursorId } = filterPostsByVote({
+            allPosts,
+            take,
+            cursorId: cursorId ? cursorId : null,
+          });
 
           return { posts, cursorId: newCursorId };
         } catch (error) {
@@ -128,7 +162,6 @@ export const postQueries = extendType({
               orderBy: {
                 createdAt: "desc",
               },
-              skip,
               take,
             });
           }
@@ -168,47 +201,59 @@ export const postQueries = extendType({
             include: { votes: true },
           });
 
-          const filteredPosts = filterPosts(allPosts);
-
-          const lastPostId = filteredPosts[filteredPosts.length - 1].id;
-
-          if (take > filteredPosts.length) {
-            return { posts: filteredPosts, cursorId: "" };
-          }
-
-          if (!cursorId) {
-            const posts = filteredPosts.slice(0, take);
-
-            const newCursorId = posts[posts.length - 1].id;
-
-            return { posts, cursorId: newCursorId };
-          }
-
-          const cursorIndex = filteredPosts.findIndex(
-            ({ id }) => id === cursorId
-          );
-
-          if (cursorIndex + 1 + take > filteredPosts.length) {
-            return {
-              posts: filteredPosts.slice(cursorIndex + 1),
-              cursorId: "",
-            };
-          }
-
-          const posts = filteredPosts.slice(
-            cursorIndex + 1,
-            cursorIndex + take + 1
-          );
-
-          const newCursorId = posts[posts.length - 1].id;
-
-          if (newCursorId === lastPostId) {
-            return { posts, cursorId: "" };
-          }
+          const { cursorId: newCursorId, posts } = filterPostsByVote({
+            allPosts,
+            take,
+            cursorId: cursorId ? cursorId : null,
+          });
 
           return { posts, cursorId: newCursorId };
         } catch (error) {
           return { message: "unexpected error while fetching posts." };
+        }
+      },
+    });
+
+    t.nonNull.field("fetchUserBookmarks", {
+      type: "BatchPostsResponse",
+      args: {
+        take: nonNull(intArg()),
+        cursorId: stringArg(),
+      },
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const { prisma, userId } = context;
+          const { take, cursorId } = args;
+          const skip = 1;
+          let posts;
+
+          if (cursorId) {
+            posts = await prisma.post.findMany({
+              orderBy: { createdAt: "desc" },
+              where: { bookmarkedBy: { some: { id: userId } } },
+              take,
+              skip,
+              cursor: { id: cursorId },
+            });
+          } else {
+            posts = await prisma.post.findMany({
+              orderBy: { createdAt: "desc" },
+              where: { bookmarkedBy: { some: { id: userId } } },
+              take,
+            });
+          }
+
+          if (!posts.length) {
+            return { posts, cursorId: "" };
+          }
+
+          const newCursorId = posts[posts.length - 1].id;
+
+          return { posts, cursorId: newCursorId };
+        } catch (error) {
+          return {
+            message: "unexpected error occurred while fetching bookmarks",
+          };
         }
       },
     });

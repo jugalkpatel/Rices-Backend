@@ -422,10 +422,12 @@ export interface NexusGenFieldTypes {
     authenticate: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     fetchAllPostsByTime: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
     fetchAllPostsByVotes: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
-    fetchAllUserPosts: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
+    fetchAllUserPostsByTime: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
+    fetchAllUserPostsByVote: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
     fetchCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     fetchPost: NexusGenRootTypes['PostResponse']; // PostResponse!
     fetchUser: NexusGenRootTypes['UserResponse']; // UserResponse!
+    fetchUserBookmarks: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
   }
   User: { // field return type
     bookmarks: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
@@ -648,10 +650,12 @@ export interface NexusGenFieldTypeNames {
     authenticate: 'AuthResponse'
     fetchAllPostsByTime: 'BatchPostsResponse'
     fetchAllPostsByVotes: 'BatchPostsResponse'
-    fetchAllUserPosts: 'BatchPostsResponse'
+    fetchAllUserPostsByTime: 'BatchPostsResponse'
+    fetchAllUserPostsByVote: 'BatchPostsResponse'
     fetchCommunity: 'CommunityResponse'
     fetchPost: 'PostResponse'
     fetchUser: 'UserResponse'
+    fetchUserBookmarks: 'BatchPostsResponse'
   }
   User: { // field return type name
     bookmarks: 'Post'
@@ -761,7 +765,12 @@ export interface NexusGenArgTypes {
       cursorId?: string | null; // String
       take: number; // Int!
     }
-    fetchAllUserPosts: { // args
+    fetchAllUserPostsByTime: { // args
+      cursorId?: string | null; // String
+      skip?: number | null; // Int
+      take: number; // Int!
+    }
+    fetchAllUserPostsByVote: { // args
       cursorId?: string | null; // String
       skip?: number | null; // Int
       take: number; // Int!
@@ -771,6 +780,10 @@ export interface NexusGenArgTypes {
     }
     fetchPost: { // args
       postId: string; // String!
+    }
+    fetchUserBookmarks: { // args
+      cursorId?: string | null; // String
+      take: number; // Int!
     }
   }
 }
