@@ -1,7 +1,7 @@
 import { extendType, nonNull, stringArg } from "nexus";
 import { Context } from "types";
 
-export const allCommunities = extendType({
+export const communityQueries = extendType({
   type: "Query",
   definition: (t) => {
     t.nonNull.field("fetchCommunity", {
@@ -33,27 +33,21 @@ export const allCommunities = extendType({
       },
     });
 
-    // t.nonNull.field("allCommunities", {
-    //   type: "AllCommunitiesResponse",
-    //   resolve: async (parent, args, context: Context, info) => {
-    //     try {
-    //       const communityList = await context.prisma.community.findMany({
-    //         select: { id: true, title: true },
-    //       });
+    t.nonNull.field("fetchAllCommunities", {
+      type: "CommunityListResponse",
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const communityList = await context.prisma.community.findMany({});
 
-    //       if (!communityList || !communityList.length) {
-    //         return { message: "there are no communities created!" };
-    //       }
+          if (!communityList || !communityList?.length) {
+            return { message: "there are not communities created" };
+          }
 
-    //       return {
-    //         communities: communityList,
-    //       };
-    //     } catch (_) {
-    //       return {
-    //         message: "something went wrong!",
-    //       };
-    //     }
-    //   },
-    // });
+          return { communities: communityList };
+        } catch (error) {
+          return { message: "unexpected error while fetching all communities" };
+        }
+      },
+    });
   },
 });

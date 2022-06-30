@@ -65,6 +65,12 @@ type Community {
   title: String!
 }
 
+type CommunityList {
+  communities: [Community]
+}
+
+union CommunityListResponse = CommonError | CommunityList
+
 type CommunityPost {
   id: String!
 }
@@ -222,7 +228,7 @@ type JoinCommunityResult {
 
 type Mutation {
   authenticate: UserResponse!
-  createBookmark(postId: String!): UserResponse!
+  createBookmark(postId: String!): PostResponse!
   createComment(postId: String!, text: String!): CommentResponse!
   createCommunity(description: String!, name: String!): CommunityResponse!
   createPost(community: String!, content: String!, title: String!): PostResponse!
@@ -232,7 +238,7 @@ type Mutation {
   login(email: String!, password: String!): UserResponse!
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): UserResponse!
-  removeBookmark(postId: String!): UserResponse!
+  removeBookmark(postId: String!): PostResponse!
   removeCommentVote(commentId: String!, voteId: String!): CommentVoteResponse!
   removeVote(communityId: String!, postId: String!, voteId: String!): VoteResponse!
   vote(data: VoteArgs): VoteResponse!
@@ -265,6 +271,7 @@ type PostWithId {
 
 type Query {
   authenticate: AuthResponse!
+  fetchAllCommunities: CommunityListResponse!
   fetchAllPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
   fetchAllPostsByVotes(cursorId: String, take: Int!): BatchPostsResponse!
   fetchAllUserPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!

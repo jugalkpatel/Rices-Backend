@@ -60,89 +60,89 @@ export const userMutations = extendType({
       },
     });
 
-    t.nonNull.field("createBookmark", {
-      type: "UserResponse",
-      args: {
-        postId: nonNull(stringArg()),
-      },
-      resolve: async (parent, args, context: Context, info) => {
-        try {
-          const { userId, prisma } = context;
-          const { postId } = args;
+    // t.nonNull.field("createBookmark", {
+    //   type: "UserResponse",
+    //   args: {
+    //     postId: nonNull(stringArg()),
+    //   },
+    //   resolve: async (parent, args, context: Context, info) => {
+    //     try {
+    //       const { userId, prisma } = context;
+    //       const { postId } = args;
 
-          if (!postId || !userId) {
-            return { message: "error while parsing inputs" };
-          }
+    //       if (!postId || !userId) {
+    //         return { message: "error while parsing inputs" };
+    //       }
 
-          const alreadyBookmarked = await prisma.user.findFirst({
-            where: {
-              AND: [
-                { id: userId },
-                { bookmarks: { some: { id: { contains: postId } } } },
-              ],
-            },
-          });
+    //       const alreadyBookmarked = await prisma.user.findFirst({
+    //         where: {
+    //           AND: [
+    //             { id: userId },
+    //             { bookmarks: { some: { id: { contains: postId } } } },
+    //           ],
+    //         },
+    //       });
 
-          if (alreadyBookmarked?.id) {
-            return { message: "post already bookmarked" };
-          }
+    //       if (alreadyBookmarked?.id) {
+    //         return { message: "post already bookmarked" };
+    //       }
 
-          const updatedUserWithBookmarks = await prisma.user.update({
-            where: { id: userId },
-            data: { bookmarks: { connect: [{ id: postId }] } },
-          });
+    //       const updatedUserWithBookmarks = await prisma.user.update({
+    //         where: { id: userId },
+    //         data: { bookmarks: { connect: [{ id: postId }] } },
+    //       });
 
-          if (!updatedUserWithBookmarks?.id) {
-            return { message: "error while adding post to the bookmarks" };
-          }
+    //       if (!updatedUserWithBookmarks?.id) {
+    //         return { message: "error while adding post to the bookmarks" };
+    //       }
 
-          return updatedUserWithBookmarks;
-        } catch (error) {
-          console.log({ error });
-          return { message: "unexpected error while creating bookmark" };
-        }
-      },
-    });
+    //       return updatedUserWithBookmarks;
+    //     } catch (error) {
+    //       console.log({ error });
+    //       return { message: "unexpected error while creating bookmark" };
+    //     }
+    //   },
+    // });
 
-    t.nonNull.field("removeBookmark", {
-      type: "UserResponse",
-      args: {
-        postId: nonNull(stringArg()),
-      },
-      resolve: async (parent, args, context: Context, info) => {
-        try {
-          const { postId } = args;
-          const { prisma, userId } = context;
+    // t.nonNull.field("removeBookmark", {
+    //   type: "UserResponse",
+    //   args: {
+    //     postId: nonNull(stringArg()),
+    //   },
+    //   resolve: async (parent, args, context: Context, info) => {
+    //     try {
+    //       const { postId } = args;
+    //       const { prisma, userId } = context;
 
-          if (!postId || !userId) {
-            return { message: "error while parsing inputs." };
-          }
+    //       if (!postId || !userId) {
+    //         return { message: "error while parsing inputs." };
+    //       }
 
-          const checkBookmark = await prisma.user.findFirst({
-            where: { bookmarks: { some: { id: { contains: postId } } } },
-          });
+    //       const checkBookmark = await prisma.user.findFirst({
+    //         where: { bookmarks: { some: { id: { contains: postId } } } },
+    //       });
 
-          if (!checkBookmark?.id) {
-            return { message: "post is not in the bookmarks" };
-          }
+    //       if (!checkBookmark?.id) {
+    //         return { message: "post is not in the bookmarks" };
+    //       }
 
-          const updatedUserWithBookmarks = await prisma.user.update({
-            where: { id: userId },
-            data: { bookmarks: { disconnect: [{ id: postId }] } },
-          });
+    //       const updatedUserWithBookmarks = await prisma.user.update({
+    //         where: { id: userId },
+    //         data: { bookmarks: { disconnect: [{ id: postId }] } },
+    //       });
 
-          if (!updatedUserWithBookmarks?.id) {
-            return { message: "error while removing post from bookmarks" };
-          }
+    //       if (!updatedUserWithBookmarks?.id) {
+    //         return { message: "error while removing post from bookmarks" };
+    //       }
 
-          return updatedUserWithBookmarks;
-        } catch (error) {
-          console.log({ error });
-          return {
-            message: "unexpected error while removing post from bookmarks",
-          };
-        }
-      },
-    });
+    //       return updatedUserWithBookmarks;
+    //     } catch (error) {
+    //       console.log({ error });
+    //       return {
+    //         message: "unexpected error while removing post from bookmarks",
+    //       };
+    //     }
+    //   },
+    // });
   },
 });

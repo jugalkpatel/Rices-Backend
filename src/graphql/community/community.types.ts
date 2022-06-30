@@ -48,6 +48,25 @@ export const community = objectType({
   },
 });
 
+export const communitylist = objectType({
+  isTypeOf: (data) => {
+    const isTypeValid = "communities" in data ? true : false;
+
+    return isTypeValid;
+  },
+  name: "CommunityList",
+  definition: (t) => {
+    t.list.field("communities", { type: "Community" });
+  },
+});
+
+export const CommunityListResponse = unionType({
+  name: "CommunityListResponse",
+  definition: (t) => {
+    t.members("CommunityList", "CommonError");
+  },
+});
+
 export const CommunityResponse = unionType({
   name: "CommunityResponse",
   definition: (t) => {

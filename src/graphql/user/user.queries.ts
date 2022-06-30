@@ -38,5 +38,12 @@ export const UserQuery = extendType({
         }
       },
     });
+
+    // t.nonNull.field("bookmarks", {
+    //   type: "UserResponse",
+    //   resolve: (parent, args, context: Context, info) => {
+    //     bb;
+    //   },
+    // });
   },
 });

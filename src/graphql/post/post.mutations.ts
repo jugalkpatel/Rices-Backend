@@ -41,6 +41,88 @@ export const CreatePost = extendType({
       },
     });
 
+    t.nonNull.field("createBookmark", {
+      type: "PostResponse",
+      args: {
+        postId: nonNull(stringArg()),
+      },
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const { prisma, userId } = context;
+          const { postId } = args;
+
+          const alreadyBookmarked = await prisma.user.findFirst({
+            where: {
+              AND: [
+                { id: userId },
+                { bookmarks: { some: { id: { contains: postId } } } },
+              ],
+            },
+          });
+
+          if (alreadyBookmarked?.id) {
+            return { message: "post already bookmarked" };
+          }
+
+          const bookmarkedPost = await prisma.post.update({
+            where: {
+              id: postId,
+            },
+            data: { bookmarkedBy: { connect: [{ id: userId }] } },
+          });
+
+          if (!bookmarkedPost?.id) {
+            return { message: "error while adding post to the bookmarks" };
+          }
+
+          return bookmarkedPost;
+        } catch (error) {
+          console.log({ error });
+          return { message: "unexpected error while creating bookmark" };
+        }
+      },
+    });
+
+    t.nonNull.field("removeBookmark", {
+      type: "PostResponse",
+      args: {
+        postId: nonNull(stringArg()),
+      },
+      resolve: async (parent, args, context: Context, info) => {
+        try {
+          const { prisma, userId } = context;
+          const { postId } = args;
+
+          const alreadyBookmarked = await prisma.user.findFirst({
+            where: {
+              AND: [
+                { id: userId },
+                { bookmarks: { some: { id: { contains: postId } } } },
+              ],
+            },
+          });
+
+          if (!alreadyBookmarked?.id) {
+            return { message: "post is not bookmarked" };
+          }
+
+          const removedPost = await prisma.post.update({
+            where: { id: postId },
+            data: { bookmarkedBy: { disconnect: [{ id: userId }] } },
+          });
+
+          if (!removedPost?.id) {
+            return { message: "error while removing post from the bookmarks" };
+          }
+
+          return removedPost;
+        } catch (error) {
+          console.log({ error });
+          return { message: "unexpected error while creating bookmark" };
+        }
+      },
+    });
+
     // t.nonNull.field("removeVote", {
     //   type: "PostResponse",
     //   args: {
