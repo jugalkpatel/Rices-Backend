@@ -200,6 +200,9 @@ export interface NexusGenObjects {
     id: string; // String!
   }
   Query: {};
+  Success: { // root type
+    success: boolean; // Boolean!
+  }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -235,6 +238,7 @@ export interface NexusGenUnions {
   GetUserCommunitiesResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['IUserCommunites'];
   ICommunityResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['CommunityResult'];
   JoinCommunityResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['IJoinCommunityMember'];
+  LogoutResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['Success'];
   PostResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['Post'];
   RefreshResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['IRefresh'];
   UserResponse: NexusGenRootTypes['CommonError'] | NexusGenRootTypes['User'];
@@ -398,6 +402,7 @@ export interface NexusGenFieldTypes {
     joinCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     leaveCommunity: NexusGenRootTypes['CommunityResponse']; // CommunityResponse!
     login: NexusGenRootTypes['UserResponse']; // UserResponse!
+    logout: NexusGenRootTypes['LogoutResponse']; // LogoutResponse!
     refresh: NexusGenRootTypes['RefreshResponse']; // RefreshResponse!
     register: NexusGenRootTypes['UserResponse']; // UserResponse!
     removeBookmark: NexusGenRootTypes['PostResponse']; // PostResponse!
@@ -436,6 +441,9 @@ export interface NexusGenFieldTypes {
     fetchPost: NexusGenRootTypes['PostResponse']; // PostResponse!
     fetchUser: NexusGenRootTypes['UserResponse']; // UserResponse!
     fetchUserBookmarks: NexusGenRootTypes['BatchPostsResponse']; // BatchPostsResponse!
+  }
+  Success: { // field return type
+    success: boolean; // Boolean!
   }
   User: { // field return type
     bookmarks: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
@@ -630,6 +638,7 @@ export interface NexusGenFieldTypeNames {
     joinCommunity: 'CommunityResponse'
     leaveCommunity: 'CommunityResponse'
     login: 'UserResponse'
+    logout: 'LogoutResponse'
     refresh: 'RefreshResponse'
     register: 'UserResponse'
     removeBookmark: 'PostResponse'
@@ -668,6 +677,9 @@ export interface NexusGenFieldTypeNames {
     fetchPost: 'PostResponse'
     fetchUser: 'UserResponse'
     fetchUserBookmarks: 'BatchPostsResponse'
+  }
+  Success: { // field return type name
+    success: 'Boolean'
   }
   User: { // field return type name
     bookmarks: 'Post'
@@ -815,6 +827,7 @@ export interface NexusGenAbstractTypeMembers {
   GetUserCommunitiesResponse: "CommonError" | "IUserCommunites"
   ICommunityResponse: "CommonError" | "CommunityResult"
   JoinCommunityResponse: "CommonError" | "IJoinCommunityMember"
+  LogoutResponse: "CommonError" | "Success"
   PostResponse: "CommonError" | "Post"
   RefreshResponse: "CommonError" | "IRefresh"
   UserResponse: "CommonError" | "User"
@@ -841,7 +854,7 @@ export type NexusGenScalarNames = keyof NexusGenScalars;
 
 export type NexusGenUnionNames = keyof NexusGenUnions;
 
-export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "BatchPosts" | "Comment" | "CommentVote" | "CommonError" | "Community" | "CommunityList" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "User" | "Vote";
+export type NexusGenObjectsUsingAbstractStrategyIsTypeOf = "AllCommunities" | "AuthPayload" | "BatchPosts" | "Comment" | "CommentVote" | "CommonError" | "Community" | "CommunityList" | "CommunityResult" | "FetchCommunityResult" | "FetchPostCommentsResult" | "IComment" | "IJoinCommunityMember" | "IPostCommunity" | "IPostType" | "IRefresh" | "IUserCommunites" | "JoinCommunityResult" | "Password" | "Post" | "Success" | "User" | "Vote";
 
 export type NexusGenAbstractsUsingStrategyResolveType = never;
 

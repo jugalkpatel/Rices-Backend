@@ -170,6 +170,20 @@ export const AuthMutation = extendType({
         }
       },
     });
+
+    t.nonNull.field("logout", {
+      type: "LogoutResponse",
+      resolve: (parent, args, context: Context, info) => {
+        try {
+          const { response } = context;
+          clearTokens(response);
+
+          return { success: true };
+        } catch (error) {
+          return { message: "error while logout user" };
+        }
+      },
+    });
   },
 });
 

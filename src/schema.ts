@@ -35,6 +35,7 @@ const permissions = shield(
       removeVote: chain(isAuthenticated, validateRemoveVote),
       voteComment: isAuthenticated,
       removeCommentVote: isAuthenticated,
+      logout: isAuthenticated,
     },
   },
   { debug: true, allowExternalErrors: true }

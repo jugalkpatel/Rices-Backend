@@ -1,7 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-// postgres://qhzdufwsndtmox:a7415058f2b69fca19b36a168b0ad9ffcd396aac35eeb70269c3b4d9c222585e@ec2-3-211-221-185.compute-1.amazonaws.com:5432/dbsnjjh2es4thb
-// postgres://qhzdufwsndtmox:a7415058f2b69fca19b36a168b0ad9ffcd396aac35eeb70269c3b4d9c222585e@ec2-3-211-221-185.compute-1.amazonaws.com:5432/dbsnjjh2es4thb
 generator client {
   provider = "prisma-client-js"
 }

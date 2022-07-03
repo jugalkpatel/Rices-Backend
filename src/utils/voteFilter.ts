@@ -45,10 +45,6 @@ function filterPostsByVote({
 }: FilterPostsByVoteParams) {
   const filteredPosts = filterPosts(allPosts);
 
-  const lastPostId = filteredPosts[filteredPosts.length - 1].id;
-
-  console.log({ lastPostId });
-
   if (take > filteredPosts.length) {
     return { posts: filteredPosts, cursorId: "" };
   }
@@ -56,17 +52,13 @@ function filterPostsByVote({
   if (!cursorId) {
     const posts = filteredPosts.slice(0, take);
 
-    const newCursorId = posts[posts.length - 1].id;
+    if (posts.length) {
+      const newCursorId = posts[posts.length - 1].id;
 
-    posts.forEach(({ id }) => {
-      console.log({ id });
-    });
+      return { posts, cursorId: newCursorId };
+    }
 
-    console.log({ newCursorId });
-
-    console.log("--------------------");
-
-    return { posts, cursorId: newCursorId };
+    return { posts, cursorId: "" };
   }
 
   const cursorIndex = filteredPosts.findIndex(({ id }) => id === cursorId);
@@ -80,13 +72,18 @@ function filterPostsByVote({
 
   const posts = filteredPosts.slice(cursorIndex + 1, cursorIndex + take + 1);
 
-  const newCursorId = posts[posts.length - 1].id;
+  if (posts.length) {
+    const newCursorId = posts[posts.length - 1].id;
+    const lastPostId = filteredPosts[filteredPosts.length - 1].id;
 
-  if (newCursorId === lastPostId) {
-    return { posts, cursorId: "" };
+    if (newCursorId === lastPostId) {
+      return { posts, cursorId: "" };
+    }
+
+    return { posts, cursorId: newCursorId };
   }
 
-  return { posts, cursorId: newCursorId };
+  return { posts, cursorId: "" };
 }
 
 export { voteCount, filterPosts, filterPostsByVote };

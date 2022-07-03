@@ -30,6 +30,7 @@ export const postQueries = extendType({
 
           return post;
         } catch (error) {
+          console.log({ error });
           return { message: "unexpected error while fetching post" };
         }
       },
@@ -75,13 +76,23 @@ export const postQueries = extendType({
             });
           }
 
-          if (!posts.length) {
-            return { message: "there are no communities that joined by user" };
+          if (posts.length) {
+            const newCursorId = posts[posts.length - 1].id;
+
+            const allPosts = await prisma.post.findMany({
+              orderBy: { createdAt: "desc" },
+            });
+
+            const lastPostId = allPosts[allPosts.length - 1].id;
+
+            if (newCursorId === lastPostId) {
+              return { posts, cursorId: "" };
+            }
+
+            return { posts, cursorId: newCursorId };
           }
 
-          const newCursorId = posts[posts.length - 1].id;
-
-          return { posts, cursorId: newCursorId };
+          return { posts, cursorId: "" };
         } catch (error) {
           console.log({ error });
           return {
@@ -117,6 +128,7 @@ export const postQueries = extendType({
 
           return { posts, cursorId: newCursorId };
         } catch (error) {
+          console.log({ error });
           return {
             message: "unexpected error occurred while fetching all user posts",
           };
@@ -142,12 +154,6 @@ export const postQueries = extendType({
             skip = 1;
           }
 
-          const allPosts = await prisma.post.findMany({
-            orderBy: { createdAt: "desc" },
-          });
-
-          const lastPostId = allPosts[allPosts.length - 1].id;
-
           if (cursorId) {
             posts = await prisma.post.findMany({
               orderBy: {
@@ -166,17 +172,23 @@ export const postQueries = extendType({
             });
           }
 
-          if (!posts.length) {
-            return { message: "posts not found" };
+          if (posts.length) {
+            const newCursorId = posts[posts.length - 1].id;
+
+            const allPosts = await prisma.post.findMany({
+              orderBy: { createdAt: "desc" },
+            });
+
+            const lastPostId = allPosts[allPosts.length - 1].id;
+
+            if (newCursorId === lastPostId) {
+              return { posts, cursorId: "" };
+            }
+
+            return { posts, cursorId: newCursorId };
           }
 
-          const newCursorId = posts[posts.length - 1].id;
-
-          if (newCursorId === lastPostId) {
-            return { posts, cursorId: "" };
-          }
-
-          return { posts, cursorId: newCursorId };
+          return { posts, cursorId: "" };
         } catch (error) {
           return {
             message: "unexpected error occurred while fetching all posts",

@@ -125,8 +125,6 @@ export const CreateCommunity = extendType({
             },
           });
 
-          console.log({ community });
-
           if (!community?.id) {
             return { message: "User is not a part of the community." };
           }

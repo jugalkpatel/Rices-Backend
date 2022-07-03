@@ -19,6 +19,25 @@ export const RefreshResponse = unionType({
   },
 });
 
+export const Success = objectType({
+  isTypeOf: (data) => {
+    const isTypeValid = "success" in data ? true : false;
+
+    return isTypeValid;
+  },
+  name: "Success",
+  definition: (t) => {
+    t.nonNull.field("success", { type: "Boolean" });
+  },
+});
+
+export const LogoutResponse = unionType({
+  name: "LogoutResponse",
+  definition: (t) => {
+    t.members("Success", "CommonError");
+  },
+});
+
 // old
 export const AuthUser = objectType({
   name: "AuthUser",

@@ -226,6 +226,8 @@ type JoinCommunityResult {
   members: [IJoinCommunityMember]!
 }
 
+union LogoutResponse = CommonError | Success
+
 type Mutation {
   authenticate: UserResponse!
   createBookmark(postId: String!): PostResponse!
@@ -236,6 +238,7 @@ type Mutation {
   joinCommunity(communityId: String!): CommunityResponse!
   leaveCommunity(communityId: String!): CommunityResponse!
   login(email: String!, password: String!): UserResponse!
+  logout: LogoutResponse!
   refresh: RefreshResponse!
   register(email: String!, name: String!, password: String!): UserResponse!
   removeBookmark(postId: String!): PostResponse!
@@ -283,6 +286,10 @@ type Query {
 }
 
 union RefreshResponse = CommonError | IRefresh
+
+type Success {
+  success: Boolean!
+}
 
 type User {
   bookmarks: [Post]
