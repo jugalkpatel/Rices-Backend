@@ -37,34 +37,3 @@ export const LogoutResponse = unionType({
     t.members("Success", "CommonError");
   },
 });
-
-// old
-export const AuthUser = objectType({
-  name: "AuthUser",
-  definition: (t) => {
-    t.nonNull.string("id");
-    t.nonNull.string("name");
-    t.nonNull.string("email");
-    t.nonNull.string("picture");
-  },
-});
-
-export const AuthPayload = objectType({
-  name: "AuthPayload",
-  isTypeOf: (data) => {
-    const isTypeValid = "user" in data ? true : false;
-
-    return isTypeValid;
-  },
-  definition: (t) => {
-    // t.nonNull.string("token");
-    t.nonNull.field("user", { type: "AuthUser" });
-  },
-});
-
-export const AuthResponse = unionType({
-  name: "AuthResponse",
-  definition: (t) => {
-    t.members("AuthPayload", "CommonError");
-  },
-});

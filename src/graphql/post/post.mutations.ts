@@ -122,57 +122,5 @@ export const CreatePost = extendType({
         }
       },
     });
-
-    // t.nonNull.field("removeVote", {
-    //   type: "PostResponse",
-    //   args: {
-    //     postId: nonNull(stringArg()),
-    //     voteId: nonNull(stringArg()),
-    //   },
-    //   resolve: async (parent, args, context: Context, info) => {
-    //     try {
-    //       const { prisma, userId } = context;
-    //       const { postId, voteId } = args;
-
-    //       if (!postId || !voteId) {
-    //         return { message: "error while parsing inputs" };
-    //       }
-
-    //       const vote = await prisma.vote.findFirst({
-    //         where: {
-    //           AND: [{ id: voteId }, { postId: postId }],
-    //         },
-    //       });
-
-    //       if (!vote || !vote.id) {
-    //         return { message: "invalid operation" };
-    //       }
-
-    //       const deattchUser = await prisma.user.update({
-    //         where: { id: userId },
-    //         data: { votes: { disconnect: [{ id: voteId }] } },
-    //       });
-
-    //       const deattchPost = await prisma.post.update({
-    //         where: { id: postId },
-    //         data: { votes: { disconnect: [{ id: voteId }] } },
-    //       });
-
-    //       const deleteVote = await prisma.vote.delete({
-    //         where: { id: voteId },
-    //       });
-
-    //       // const transaction = await prisma.$transaction([
-    //       //   deattchUser,
-    //       //   deattchPost,
-    //       //   deleteVote,
-    //       // ]);
-
-    //       return post;
-    //     } catch (error) {
-    //       return { message: "unexpected error while removing vote" };
-    //     }
-    //   },
-    // });
   },
 });

@@ -10,8 +10,6 @@ export const UserQuery = extendType({
         try {
           const { userId, prisma } = context;
 
-          console.log({ userId });
-
           if (!userId) {
             return { message: "user not available!" };
           }
@@ -23,8 +21,6 @@ export const UserQuery = extendType({
           const posts = await prisma.post.findMany({
             where: { community: { members: { every: { id: userId } } } },
           });
-
-          console.log({ user });
 
           if (!user || !user?.id) {
             return { message: "something went wrong!" };
@@ -38,12 +34,5 @@ export const UserQuery = extendType({
         }
       },
     });
-
-    // t.nonNull.field("bookmarks", {
-    //   type: "UserResponse",
-    //   resolve: (parent, args, context: Context, info) => {
-    //     bb;
-    //   },
-    // });
   },
 });

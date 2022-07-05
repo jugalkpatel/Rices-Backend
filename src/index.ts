@@ -9,10 +9,6 @@ import { context } from "./context";
 
 const ORIGIN_1 = process.env.ORIGIN_1 as string;
 const ORIGIN_2 = process.env.ORIGIN_2 as string;
-// const PORT = process.env.PORT as string;
-
-// "build": "prisma migrate deploy && prisma generate && npm run generate && tsc",
-// "build": "prisma generate && npm run generate && tsc",
 (async () => {
   try {
     const app = express();
@@ -29,8 +25,6 @@ const ORIGIN_2 = process.env.ORIGIN_2 as string;
 
     await server.start();
 
-    console.log({ ORIGIN_1, ORIGIN_2 });
-
     server.applyMiddleware({
       app,
       path: "/",
@@ -44,9 +38,6 @@ const ORIGIN_2 = process.env.ORIGIN_2 as string;
       httpServer.listen({ port: process.env.PORT || 3000 }, resolve)
     );
 
-    // console.log(
-    //   `🚀 Server ready at http://localhost:4000${server.graphqlPath}`
-    // );
     console.log(`🚀 Server ready`);
   } catch (error) {
     console.error({ error });

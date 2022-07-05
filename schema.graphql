@@ -2,25 +2,6 @@
 ### Do not make changes to this file directly
 
 
-type AllCommunities {
-  communities: [CommunityResult!]!
-}
-
-union AllCommunitiesResponse = AllCommunities | CommonError
-
-type AuthPayload {
-  user: AuthUser!
-}
-
-union AuthResponse = AuthPayload | CommonError
-
-type AuthUser {
-  email: String!
-  id: String!
-  name: String!
-  picture: String!
-}
-
 type BatchPosts {
   cursorId: String!
   posts: [Post]
@@ -71,159 +52,20 @@ type CommunityList {
 
 union CommunityListResponse = CommonError | CommunityList
 
-type CommunityPost {
-  id: String!
-}
-
 union CommunityResponse = CommonError | Community
-
-type CommunityResult {
-  id: String!
-  title: String!
-}
-
-type CommunityUser {
-  id: String!
-}
-
-union CreateCommentResponse = CommonError | IComment
 
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
-union FetchCommunityResponse = CommonError | FetchCommunityResult
-
-type FetchCommunityResult implements ICommunity {
-  banner: String!
-  createdAt: DateTime!
-  creator: CommunityUser!
-  description: String!
-  id: String!
-  members: [CommunityUser]!
-  picture: String!
-  posts: [IPostType]
-  title: String!
-  updatedAt: DateTime!
-}
-
-union FetchPostCommentsResponse = CommonError | FetchPostCommentsResult
-
-type FetchPostCommentsResult {
-  comments: [IComment]
-  postId: String!
-}
-
-union FetchPostResponse = CommonError | IPostType
-
 enum FilterType {
   NEW
   TOP
 }
 
-union GetUserCommunitiesResponse = CommonError | IUserCommunites
-
-type IComment {
-  createdAt: DateTime!
-  id: String!
-  post: PostWithId!
-  text: String!
-  updatedAt: DateTime!
-  user: IPostUser!
-  votes: [ICommonVote]
-}
-
-type ICommonVote {
-  id: String!
-  type: VoteType!
-  votedBy: IUserWithID!
-}
-
-interface ICommunity {
-  banner: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  picture: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
-union ICommunityResponse = CommonError | CommunityResult
-
-type IJoinCommunityMember {
-  id: String!
-}
-
-interface IPost {
-  content: String!
-  createdAt: DateTime!
-  id: String!
-  title: String!
-}
-
-type IPostCommunity implements ICommunity {
-  banner: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  picture: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
-type IPostType implements IPost {
-  bookmarkedBy: [IUserWithID]
-  comments: [IComment]
-  community: IPostCommunity!
-  content: String!
-  createdAt: DateTime!
-  id: String!
-  postedBy: IPostUser!
-  title: String!
-  votes: [ICommonVote!]
-}
-
-type IPostUser {
-  id: String!
-  name: String!
-  picture: String!
-}
-
 type IRefresh {
   success: Boolean!
-}
-
-type IUser {
-  id: String!
-}
-
-type IUserCommunites {
-  communities: [IUserCommunity]
-  id: String!
-}
-
-type IUserCommunity {
-  id: String!
-  picture: String!
-  title: String!
-}
-
-type IUserQueryResult {
-  id: String!
-  joinedCommunities: [IUser]!
-  name: String!
-}
-
-type IUserWithID {
-  id: String!
-}
-
-union JoinCommunityResponse = CommonError | IJoinCommunityMember
-
-type JoinCommunityResult {
-  members: [IJoinCommunityMember]!
 }
 
 union LogoutResponse = CommonError | Success
@@ -268,12 +110,7 @@ type Post {
 
 union PostResponse = CommonError | Post
 
-type PostWithId {
-  id: String!
-}
-
 type Query {
-  authenticate: AuthResponse!
   fetchAllCommunities: CommunityListResponse!
   fetchAllPostsByTime(cursorId: String, skip: Int, take: Int!): BatchPostsResponse!
   fetchAllPostsByVotes(cursorId: String, take: Int!): BatchPostsResponse!
