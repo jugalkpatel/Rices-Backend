@@ -11,6 +11,7 @@ const ORIGIN_1 = process.env.ORIGIN_1 as string;
 const ORIGIN_2 = process.env.ORIGIN_2 as string;
 (async () => {
   try {
+    const port = process.env.PORT || 3000;
     const app = express();
     app.use(cookieParser());
 
@@ -35,10 +36,10 @@ const ORIGIN_2 = process.env.ORIGIN_2 as string;
     });
 
     await new Promise<void>((resolve) =>
-      httpServer.listen({ port: process.env.PORT || 3000 }, resolve)
+      httpServer.listen({ port: port }, resolve)
     );
 
-    console.log(`🚀 Server ready`);
+    console.log(`🚀 Server ready ${port}`);
   } catch (error) {
     console.error({ error });
   }
