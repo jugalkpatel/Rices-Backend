@@ -8,7 +8,6 @@
     "dev": "ts-node-dev --transpile-only --no-notify --exit-child src/index.ts",
     "generate": "ts-node --transpile-only src/schema.ts",
     "migrate:deploy": "prisma migrate deploy",
-    "build": "rimraf dist && prisma migrate deploy && prisma generate && npm run generate && tsc",
     "start": "node dist/src/index.js",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist"
