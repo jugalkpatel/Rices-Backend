@@ -9,6 +9,8 @@ import { context } from "./context";
 
 const ORIGIN_1 = process.env.ORIGIN_1 as string;
 const ORIGIN_2 = process.env.ORIGIN_2 as string;
+console.log({ ORIGIN_1 });
+console.log({ ORIGIN_2 });
 (async () => {
   try {
     const app = express();
