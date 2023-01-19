@@ -12,6 +12,8 @@ const schema_1 = require("./schema");
 const context_1 = require("./context");
 const ORIGIN_1 = process.env.ORIGIN_1;
 const ORIGIN_2 = process.env.ORIGIN_2;
+console.log({ ORIGIN_1 });
+console.log({ ORIGIN_2 });
 (async () => {
     try {
         const app = (0, express_1.default)();
